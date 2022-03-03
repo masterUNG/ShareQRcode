@@ -1,4 +1,7 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 import 'package:shareqrcode/utility/my_constant.dart';
 import 'package:shareqrcode/utility/my_dialog.dart';
 import 'package:shareqrcode/widgets/show_text.dart';
@@ -14,9 +17,19 @@ class CreateQRcode extends StatefulWidget {
 }
 
 class _CreateQRcodeState extends State<CreateQRcode> {
-  String? chooseLink;
+  String? chooseLink, randomCode;
   GlobalKey globalKey = GlobalKey();
   bool display = false;
+
+  var itemLinks = <String>[];
+
+  @override
+  void initState() {
+    super.initState();
+    itemLinks.add(MyConstant.pathLine);
+    itemLinks.add(MyConstant.pathFacebook);
+    itemLinks.add(MyConstant.pathWrChat);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,13 +42,22 @@ class _CreateQRcodeState extends State<CreateQRcode> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ShowText(
-              label: 'เลือก Link',
-              textStyle: MyConstant().h2Style(),
-            ),
-            radioLine(),
-            radioFacebook(),
-            radioWeChart(),
+            DropdownButton<dynamic>(
+                hint: newTitle(),
+                value: chooseLink,
+                items: itemLinks
+                    .map(
+                      (e) => DropdownMenuItem(
+                        child: ShowText(label: e),
+                        value: e,
+                      ),
+                    )
+                    .toList(),
+                onChanged: (value) {
+                  setState(() {
+                    chooseLink = value.toString();
+                  });
+                }),
             createQRcodeButton(),
             showQR(),
           ],
@@ -44,8 +66,27 @@ class _CreateQRcodeState extends State<CreateQRcode> {
     );
   }
 
+  ShowText newTitle() {
+    return ShowText(
+      label: 'เลือก Link',
+      textStyle: MyConstant().h2Style(),
+    );
+  }
+
   Widget showQR() {
-    return display ? Text(chooseLink!) : const SizedBox();
+    return display
+        ? Center(
+          child: Column(
+              children: [
+               
+                SizedBox(width: 250,height: 250,
+                  child: QrImage(data: randomCode!),
+                ),
+                 ShowText(label: 'code ==> $randomCode'),
+              ],
+            ),
+        )
+        : const SizedBox();
   }
 
   Row createQRcodeButton() {
@@ -112,6 +153,8 @@ class _CreateQRcodeState extends State<CreateQRcode> {
   }
 
   Future<void> processGenQRcode() async {
+    randomCode = 'code${Random().nextInt(10000)}';
+
     setState(() {
       display = true;
     });
