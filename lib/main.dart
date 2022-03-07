@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:shareqrcode/listtileWidget.dart';
 import 'package:shareqrcode/states/add_data.dart';
 import 'package:shareqrcode/states/authen.dart';
 import 'package:shareqrcode/states/create_qr_code.dart';
@@ -35,8 +36,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      routes: map,
-      initialRoute: initial,
+      // routes: map,
+      // initialRoute: initial,
+      home: ListtileWidget(),
     );
   }
 }
