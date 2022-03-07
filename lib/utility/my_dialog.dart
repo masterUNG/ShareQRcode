@@ -19,7 +19,12 @@ class MyDialog {
           textStyle: MyConstant().h2Style(),
         ),
         content: ShowText(label: message),
-        actions: [TextButton(onPressed: function, child: Text(label))],
+        actions: [
+          TextButton(
+            onPressed: function,
+            child: Text(label),
+          ),
+        ],
       ),
     );
   }

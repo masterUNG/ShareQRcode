@@ -12,9 +12,11 @@ class ShowButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: pressFunc,
-      child: Text(label),
+    return Container(margin: const EdgeInsets.only(right: 4),
+      child: ElevatedButton(
+        onPressed: pressFunc,
+        child: Text(label),
+      ),
     );
   }
 }
