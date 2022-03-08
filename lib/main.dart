@@ -15,7 +15,7 @@ final Map<String, WidgetBuilder> map = {
   MyConstant.routeHome: (context) => const Home(),
   MyConstant.routeShowList: (context) => const ShowList(),
   MyConstant.routeWorkQRcode: (context) => const WorkQRcode(),
-  MyConstant.routeAuthen:(context) => const Authen(),
+  MyConstant.routeAuthen: (context) => const Authen(),
 };
 
 String? initial;
@@ -36,9 +36,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      // routes: map,
-      // initialRoute: initial,
-      home: ListtileWidget(),
+      routes: map,
+      initialRoute: initial,
     );
   }
 }

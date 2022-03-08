@@ -13,12 +13,17 @@ class ShowSignOut extends StatelessWidget {
     return IconButton(
       onPressed: () {
         MyDialog(context: context).normalDialog(
-            'Sign Out ?', 'คุณต้องการ Sign Out ?', 'OK', () async {
-          await FirebaseAuth.instance.signOut().then((value) {
-            Navigator.pushNamedAndRemoveUntil(
-                context, MyConstant.routeHome, (route) => false);
-          });
-        });
+          'Sign Out ?',
+          'คุณต้องการ Sign Out ?',
+          'OK',
+          () async {
+            await FirebaseAuth.instance.signOut().then((value) {
+              Navigator.pushNamedAndRemoveUntil(
+                  context, MyConstant.routeHome, (route) => false);
+            });
+          },
+          'images/image2.png',
+        );
       },
       icon: const Icon(Icons.logout),
     );

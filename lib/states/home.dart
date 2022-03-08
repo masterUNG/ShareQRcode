@@ -60,8 +60,13 @@ class _HomeState extends State<Home> {
           newWork(),
           ShowButton(
             label: 'สร้าง ระหัสสินค้า และ อื่นๆ',
-            pressFunc: () =>
-                Navigator.pushNamed(context, MyConstant.routeAddData),
+            pressFunc: () {
+              if (checkLogin!) {
+                Navigator.pushNamed(context, MyConstant.routeAddData);
+              } else {
+                requireLoginDialog();
+              }
+            },
           )
         ],
       ),
@@ -93,12 +98,7 @@ class _HomeState extends State<Home> {
                         print('Login OK');
                       } else {
                         print('Login Require');
-                        MyDialog(context: context).normalDialog(
-                            'ยังไม่ได้ Login', 'กรุณา Login ก่อน คะ', 'Login',
-                            () {
-                          Navigator.pop(context);
-                          Navigator.pushNamed(context, MyConstant.routeAuthen);
-                        }).then((value) => processChcckLogin());
+                        requireLoginDialog();
                       }
                     }),
                 ShowButton(label: 'QR code', pressFunc: () {}),
@@ -108,5 +108,18 @@ class _HomeState extends State<Home> {
         ),
       ),
     );
+  }
+
+  void requireLoginDialog() {
+    MyDialog(context: context).normalDialog(
+      'ยังไม่ได้ Login',
+      'กรุณา Login ก่อน คะ',
+      'Login',
+      () {
+        Navigator.pop(context);
+        Navigator.pushNamed(context, MyConstant.routeAuthen);
+      },
+      'images/image2.png',
+    ).then((value) => processChcckLogin());
   }
 }

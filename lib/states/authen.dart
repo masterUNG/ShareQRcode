@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shareqrcode/utility/my_dialog.dart';
 import 'package:shareqrcode/widgets/show_form.dart';
+import 'package:shareqrcode/widgets/show_image.dart';
 import 'package:shareqrcode/widgets/show_sizebox.dart';
 import 'package:shareqrcode/widgets/showbutton.dart';
 
@@ -27,7 +28,9 @@ class _AuthenState extends State<Authen> {
         child: Center(
           child: Column(
             children: [
-              const ShowSizeBox(),
+              const ShowImage(
+                path: 'images/image1.png',
+              ),
               ShowForm(
                 label: 'Email :',
                 changeFunc: (String string) => email = string.trim(),
@@ -44,10 +47,12 @@ class _AuthenState extends State<Authen> {
                     if ((email?.isEmpty ?? true) ||
                         (password?.isEmpty ?? true)) {
                       MyDialog(context: context).normalDialog(
-                          'มีช่องว่าง ?',
-                          'กรุณากรอกทุกช่อง คะ',
-                          'OK',
-                          () => Navigator.pop(context));
+                        'มีช่องว่าง ?',
+                        'กรุณากรอกทุกช่อง คะ',
+                        'OK',
+                        () => Navigator.pop(context),
+                        'images/image4.png',
+                      );
                     } else {
                       processCheckAuthen();
                     }
@@ -62,10 +67,15 @@ class _AuthenState extends State<Authen> {
   Future<void> processCheckAuthen() async {
     await FirebaseAuth.instance
         .signInWithEmailAndPassword(email: email!, password: password!)
-        .then((value)=> Navigator.pop(context))
+        .then((value) => Navigator.pop(context))
         .catchError((onError) {
       MyDialog(context: context).normalDialog(
-          onError.code, onError.message, 'OK', () => Navigator.pop(context));
+        onError.code,
+        onError.message,
+        'OK',
+        () => Navigator.pop(context),
+        'images/image3.png',
+      );
     });
   }
 }

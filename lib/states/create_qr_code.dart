@@ -76,16 +76,17 @@ class _CreateQRcodeState extends State<CreateQRcode> {
   Widget showQR() {
     return display
         ? Center(
-          child: Column(
+            child: Column(
               children: [
-               
-                SizedBox(width: 250,height: 250,
+                SizedBox(
+                  width: 250,
+                  height: 250,
                   child: QrImage(data: randomCode!),
                 ),
-                 ShowText(label: 'code ==> $randomCode'),
+                ShowText(label: 'code ==> $randomCode'),
               ],
             ),
-        )
+          )
         : const SizedBox();
   }
 
@@ -97,8 +98,13 @@ class _CreateQRcodeState extends State<CreateQRcode> {
             label: 'Create QR code',
             pressFunc: () {
               if (chooseLink == null) {
-                MyDialog(context: context).normalDialog('ยังไม่ได้เลือก Link',
-                    'กรุณาเลือก Link', 'OK', () => Navigator.pop(context));
+                MyDialog(context: context).normalDialog(
+                  'ยังไม่ได้เลือก Link',
+                  'กรุณาเลือก Link',
+                  'OK',
+                  () => Navigator.pop(context),
+                  'images/image2.png',
+                );
               } else {
                 processGenQRcode();
               }

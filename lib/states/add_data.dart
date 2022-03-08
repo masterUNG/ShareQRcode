@@ -1,4 +1,7 @@
+// ignore_for_file: avoid_print
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shareqrcode/utility/my_constant.dart';
 import 'package:shareqrcode/widgets/show_text.dart';
@@ -13,23 +16,28 @@ class AddData extends StatefulWidget {
 }
 
 class _AddDataState extends State<AddData> {
-  String uidLogin = MyConstant.ungUid;
-  var itemDropdowns = <String>['+ Add New Item'];
+  String? uidLogin;
+  var itemDropdowns = <String>[];
   String? chooseItemDropdown;
 
   @override
   void initState() {
     super.initState();
     findUserData();
+    itemDropdowns.add('+ Add New Item');
   }
 
   Future<void> findUserData() async {
-    await FirebaseFirestore.instance
-        .collection('dataCode')
-        .doc(uidLogin)
-        .get()
-        .then((value) {
-      print('value ==> ${value.data()}');
+    await FirebaseAuth.instance.authStateChanges().listen((event) async {
+      uidLogin = event!.uid;
+
+      await FirebaseFirestore.instance
+          .collection('dataCode')
+          .doc(uidLogin)
+          .get()
+          .then((value) {
+        print('value ==> ${value.data()}');
+      });
     });
   }
 
@@ -54,7 +62,15 @@ class _AddDataState extends State<AddData> {
                       ),
                     )
                     .toList(),
-                onChanged: (value) {})
+                onChanged: (value) {
+                  String string = value;
+                  print('string = $string');
+                  if (value == itemDropdowns[itemDropdowns.length - 1]) {
+                    print('Choose Add item');
+                  } else {
+                    print('not choose Add item');
+                  }
+                })
           ],
         ),
       ),
