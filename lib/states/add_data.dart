@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:shareqrcode/models/favorite_link_model.dart';
 import 'package:shareqrcode/utility/my_constant.dart';
 import 'package:shareqrcode/utility/my_dialog.dart';
+import 'package:shareqrcode/widgets/show_form.dart';
+import 'package:shareqrcode/widgets/show_sizebox.dart';
 import 'package:shareqrcode/widgets/show_text.dart';
 
 class AddData extends StatefulWidget {
@@ -20,7 +22,8 @@ class AddData extends StatefulWidget {
 class _AddDataState extends State<AddData> {
   String? uidLogin, nameItem, urlItem;
   var itemDropdowns = <String>[];
-  String? chooseItemDropdown;
+  String? chooseItemDropdown, tempChooseItem;
+  var tempChooseItems = <String>[];
 
   @override
   void initState() {
@@ -30,8 +33,8 @@ class _AddDataState extends State<AddData> {
 
   Future<void> findUserData() async {
     if (itemDropdowns.isNotEmpty) {
-  itemDropdowns.clear();
-}
+      itemDropdowns.clear();
+    }
 
     await FirebaseAuth.instance.authStateChanges().listen((event) async {
       uidLogin = event!.uid;
@@ -63,61 +66,90 @@ class _AddDataState extends State<AddData> {
       appBar: AppBar(
         title: const Text('Add Data'),
       ),
-      body: Center(
-        child: Column(
-          children: [
-            newTitle(),
-            DropdownButton<dynamic>(
-                hint: const ShowText(label: 'Please Choose Item'),
-                value: chooseItemDropdown,
-                items: itemDropdowns
-                    .map(
-                      (e) => DropdownMenuItem(
-                        child: ShowText(label: e),
-                        value: e,
-                      ),
+      body: GestureDetector(
+        onTap: () => FocusScope.of(context).requestFocus(FocusScopeNode()),
+        behavior: HitTestBehavior.opaque,
+        child: Center(
+          child: Column(
+            children: [
+              const ShowSizeBox(),
+              newTitle(),
+              const ShowSizeBox(),
+              ShowForm(label: 'ชื่อสินค้า', changeFunc: (String string) {}),
+              const ShowSizeBox(),
+              ShowForm(
+                  label: 'รายละเอียดสินค้า', changeFunc: (String string) {}),
+              const ShowSizeBox(),
+              newDropBox(context),
+              tempChooseItems.isEmpty
+                  ? const ShowSizeBox()
+                  : ListView.builder(shrinkWrap: true,
+                      physics: const ScrollPhysics(),
+                      itemCount: tempChooseItems.length,
+                      itemBuilder: (context, index) =>
+                          ShowText(label: tempChooseItems[index]),
                     )
-                    .toList(),
-                onChanged: (value) {
-                  String string = value;
-                  print('string = $string');
-                  if (value == itemDropdowns[itemDropdowns.length - 1]) {
-                    print('Choose Add item');
-                    MyDialog(context: context).addNewItemDialog(
-                      title: 'เพิ่ม Item',
-                      message: 'กรุณากรอก ข้อมูลให้ครบทุกช่อง คะ',
-                      labelButton: 'Add Item',
-                      pathImage: 'images/image3.png',
-                      function: () {
-                        Navigator.pop(context);
-                        if ((nameItem?.isEmpty ?? true) ||
-                            (urlItem?.isEmpty ?? true)) {
-                          MyDialog(context: context).normalDialog(
-                              'มีช่องว่าง ?',
-                              'กรุณากรอก ให้ครบทุกช่อง คะ',
-                              'OK',
-                              () => Navigator.pop(context),
-                              'images/image2.png');
-                        } else {
-                          processAddNewItem();
-                        }
-                      },
-                      nameFunc: (String name) => nameItem = name.trim(),
-                      urlFunc: (String url) => urlItem = url.trim(),
-                    );
-                  } else {
-                    print('not choose Add item');
-                  }
-                })
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 
+  DropdownButton<dynamic> newDropBox(BuildContext context) {
+    return DropdownButton<dynamic>(
+        hint: const ShowText(label: 'Please Choose Item'),
+        value: chooseItemDropdown,
+        items: itemDropdowns
+            .map(
+              (e) => DropdownMenuItem(
+                child: ShowText(label: e),
+                value: e,
+              ),
+            )
+            .toList(),
+        onChanged: (value) {
+          String string = value;
+          print('string = $string');
+
+          tempChooseItem = string;
+
+          if (value == itemDropdowns[itemDropdowns.length - 1]) {
+            print('Choose Add item');
+            MyDialog(context: context).addNewItemDialog(
+              title: 'เพิ่ม Item',
+              message: 'กรุณากรอก ข้อมูลให้ครบทุกช่อง คะ',
+              labelButton: 'Add Item',
+              pathImage: 'images/image3.png',
+              function: () {
+                Navigator.pop(context);
+                if ((nameItem?.isEmpty ?? true) || (urlItem?.isEmpty ?? true)) {
+                  MyDialog(context: context).normalDialog(
+                      'มีช่องว่าง ?',
+                      'กรุณากรอก ให้ครบทุกช่อง คะ',
+                      'OK',
+                      () => Navigator.pop(context),
+                      'images/image2.png');
+                } else {
+                  processAddNewItem();
+                }
+              },
+              nameFunc: (String name) => nameItem = name.trim(),
+              urlFunc: (String url) => urlItem = url.trim(),
+            );
+          } else {
+            print('not choose Add item');
+            setState(() {
+              tempChooseItems.add(tempChooseItem!);
+            });
+            print('temtChooseItems ==>> $tempChooseItems');
+          }
+        });
+  }
+
   ShowText newTitle() {
     return ShowText(
-      label: 'เพิ่มข้อมูล',
+      label: 'เพิ่ม Product',
       textStyle: MyConstant().h2Style(),
     );
   }
