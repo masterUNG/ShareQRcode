@@ -7,6 +7,7 @@ import 'package:shareqrcode/models/favorite_link_model.dart';
 import 'package:shareqrcode/utility/my_constant.dart';
 import 'package:shareqrcode/utility/my_dialog.dart';
 import 'package:shareqrcode/widgets/show_form.dart';
+import 'package:shareqrcode/widgets/show_image.dart';
 import 'package:shareqrcode/widgets/show_sizebox.dart';
 import 'package:shareqrcode/widgets/show_text.dart';
 
@@ -74,42 +75,84 @@ class _AddDataState extends State<AddData> {
         onTap: () => FocusScope.of(context).requestFocus(FocusScopeNode()),
         behavior: HitTestBehavior.opaque,
         child: Center(
-          child: Column(
-            children: [
-              const ShowSizeBox(),
-              newTitle(),
-              const ShowSizeBox(),
-              ShowForm(label: 'ชื่อสินค้า', changeFunc: (String string) {}),
-              const ShowSizeBox(),
-              ShowForm(
-                  label: 'รายละเอียดสินค้า', changeFunc: (String string) {}),
-              const ShowSizeBox(),
-              newDropBox(context),
-              tempChooseItems.isEmpty
-                  ? const ShowSizeBox()
-                  : ListView.builder(
-                      shrinkWrap: true,
-                      physics: const ScrollPhysics(),
-                      itemCount: tempChooseItems.length,
-                      itemBuilder: (context, index) => Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          child: SingleChildScrollView(
+            child: LayoutBuilder(builder: (context, constraints) {
+              return Column(
+                children: [
+                  const ShowSizeBox(),
+                  newTitle(),
+                  const ShowSizeBox(),
+                  ShowForm(label: 'ชื่อสินค้า', changeFunc: (String string) {}),
+                  const ShowSizeBox(),
+                  ShowForm(
+                      label: 'รายละเอียดสินค้า',
+                      changeFunc: (String string) {}),
+                  const ShowSizeBox(),
+                  newDropBox(context),
+                  const ShowSizeBox(),
+                  listItemChoose(),
+                  const ShowSizeBox(),
+                  SizedBox(
+                    width: constraints.maxWidth * 0.8,
+                    child: Stack(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            ShowText(label: tempChooseItems[index]),
-                            const ShowSizeBox(),
-                            ShowText(
-                              label: findUrlink(tempChooseItems[index]),
-                              textStyle: MyConstant().h3BlueStyle(),
-                            ),IconButton(onPressed: (){}, icon: const Icon(Icons.delete_forever_outlined))
+                            ShowImage(
+                              path: 'images/camera.png',
+                              width: constraints.maxWidth * 0.6,
+                            ),
                           ],
                         ),
-                      ),
-                    )
-            ],
+                        Positioned(right: 0,bottom: 0,
+                          child: IconButton(
+                              onPressed: () {},
+                              icon: const Icon(Icons.add_a_photo_outlined)),
+                        )
+                      ],
+                    ),
+                  )
+                ],
+              );
+            }),
           ),
         ),
       ),
     );
+  }
+
+  StatelessWidget listItemChoose() {
+    return tempChooseItems.isEmpty
+        ? const ShowSizeBox()
+        : ListView.builder(
+            shrinkWrap: true,
+            physics: const ScrollPhysics(),
+            itemCount: tempChooseItems.length,
+            itemBuilder: (context, index) => Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  ShowText(label: tempChooseItems[index]),
+                  const ShowSizeBox(),
+                  ShowText(
+                    label: findUrlink(tempChooseItems[index]),
+                    textStyle: MyConstant().h3BlueStyle(),
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      print('delete index = $index');
+                      setState(() {
+                        tempChooseItems.removeAt(index);
+                      });
+                    },
+                    icon: const Icon(Icons.delete_forever_outlined),
+                  ),
+                ],
+              ),
+            ),
+          );
   }
 
   DropdownButton<dynamic> newDropBox(BuildContext context) {
