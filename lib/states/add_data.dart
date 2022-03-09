@@ -1,12 +1,14 @@
 // ignore_for_file: avoid_print
 
 import 'dart:io';
+import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shareqrcode/models/favorite_link_model.dart';
+import 'package:shareqrcode/models/product_model.dart';
 import 'package:shareqrcode/utility/my_constant.dart';
 import 'package:shareqrcode/utility/my_dialog.dart';
 import 'package:shareqrcode/widgets/show_form.dart';
@@ -120,7 +122,8 @@ class _AddDataState extends State<AddData> {
                                     path: 'images/camera.png',
                                     width: constraints.maxWidth * 0.6,
                                   )
-                                : SizedBox(width: constraints.maxWidth * 0.6,
+                                : SizedBox(
+                                    width: constraints.maxWidth * 0.6,
                                     child: Image.file(
                                       file!,
                                       fit: BoxFit.cover,
@@ -148,27 +151,62 @@ class _AddDataState extends State<AddData> {
           ),
         ),
       ),
-      floatingActionButton: ShowButton(
-        label: 'Add Data',
-        pressFunc: () {
-          if ((nameProduct?.isEmpty ?? true) ||
-              (detailProduct?.isEmpty ?? true)) {
-            MyDialog(context: context).normalDialog(
-                'กรอกข้อมูล ไม่ครบ',
-                'กรอก ชื่อสินค้า และ รายละเอียดให้ครบ',
-                'OK',
-                () => Navigator.pop(context),
-                'images/image3.png');
-          } else if (tempChooseItems.isEmpty) {
-            MyDialog(context: context).normalDialog(
-                'ยังไม่เลือก Item',
-                'กรุณาเลือก Item ด้วย คะ',
-                'OK',
-                () => Navigator.pop(context),
-                'images/image2.png');
-          } else {}
-        },
-      ),
+      floatingActionButton: newAddDataButton(context),
+    );
+  }
+
+  ShowButton newAddDataButton(BuildContext context) {
+    return ShowButton(
+      label: 'Add Data',
+      pressFunc: () async {
+        if ((nameProduct?.isEmpty ?? true) ||
+            (detailProduct?.isEmpty ?? true)) {
+          MyDialog(context: context).normalDialog(
+              'กรอกข้อมูล ไม่ครบ',
+              'กรอก ชื่อสินค้า และ รายละเอียดให้ครบ',
+              'OK',
+              () => Navigator.pop(context),
+              'images/image3.png');
+        } else if (tempChooseItems.isEmpty) {
+          MyDialog(context: context).normalDialog(
+              'ยังไม่เลือก Item',
+              'กรุณาเลือก Item ด้วย คะ',
+              'OK',
+              () => Navigator.pop(context),
+              'images/image2.png');
+        } else {
+          var tempChooseUrllinks = <String>[];
+          for (var item in tempChooseItems) {
+            String string = findUrlink(item);
+            tempChooseUrllinks.add(string);
+          }
+
+          String qrCode = uidLogin!.substring(0, 4);
+          qrCode = '$qrCode${Random().nextInt(1000000)}';
+
+          print('nameProduct = $nameProduct, detailProduct = $detailProduct');
+          print(
+              ' tempItemtitle = $tempChooseItems, tempChooseUrlLink = $tempChooseUrllinks, photoPath = $photoPaths');
+          print('qrCode ==> $qrCode');
+
+          ProductModel productModel = ProductModel(
+              nameProduct: nameProduct!,
+              detailProduct: detailProduct!,
+              titleItems: tempChooseItems,
+              linkItems: tempChooseUrllinks,
+              pathImages: photoPaths,
+              qrCode: qrCode,
+              timestamp: Timestamp.fromDate(DateTime.now()));
+
+          await FirebaseFirestore.instance
+              .collection('dataCode')
+              .doc(uidLogin)
+              .collection('product')
+              .doc()
+              .set(productModel.toMap())
+              .then((value) => Navigator.pop(context));
+        }
+      },
     );
   }
 
@@ -186,10 +224,10 @@ class _AddDataState extends State<AddData> {
                 children: [
                   ShowText(label: tempChooseItems[index]),
                   const ShowSizeBox(),
-                  ShowText(
-                    label: findUrlink(tempChooseItems[index]),
-                    textStyle: MyConstant().h3BlueStyle(),
-                  ),
+                  // ShowText(
+                  //   label: findUrlink(tempChooseItems[index]),
+                  //   textStyle: MyConstant().h3BlueStyle(),
+                  // ),
                   IconButton(
                     onPressed: () {
                       print('delete index = $index');

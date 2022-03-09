@@ -23,6 +23,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   bool? checkLogin;
   bool load = true;
+  String? qrCode;
 
   @override
   void initState() {
@@ -55,25 +56,27 @@ class _HomeState extends State<Home> {
                   : const SizedBox()
         ],
       ),
-      body: Column(
-        children: [
-          newWork(),
-          ShowButton(
-            label: 'สร้าง ระหัสสินค้า และ อื่นๆ',
-            pressFunc: () {
-              if (checkLogin!) {
-                Navigator.pushNamed(context, MyConstant.routeAddData);
-              } else {
-                requireLoginDialog();
-              }
-            },
-          )
-        ],
-      ),
+      body: LayoutBuilder(builder: (context, constraints) {
+        return Column(
+          children: [
+            newWork(constraints),
+            ShowButton(
+              label: 'สร้าง ระหัสสินค้า และ อื่นๆ',
+              pressFunc: () {
+                if (checkLogin!) {
+                  Navigator.pushNamed(context, MyConstant.routeAddData);
+                } else {
+                  requireLoginDialog();
+                }
+              },
+            )
+          ],
+        );
+      }),
     );
   }
 
-  Card newWork() {
+  Card newWork(BoxConstraints constraints) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -85,17 +88,27 @@ class _HomeState extends State<Home> {
               textStyle: MyConstant().h2Style(),
             ),
             Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 ShowForm(
+                  width: constraints.maxWidth * 0.33,
                   label: 'รหัสสินค้า',
-                  changeFunc: (String string) {},
+                  changeFunc: (String string) => qrCode = string.trim(),
                 ),
                 ShowButton(
                     label: 'Go',
                     pressFunc: () async {
                       if (checkLogin!) {
-                        print('Login OK');
+                        if (qrCode?.isEmpty ?? true) {
+                          MyDialog(context: context).normalDialog(
+                              'Have Space ?',
+                              'Please Fill Every Blank',
+                              'OK',
+                              () => Navigator.pop(context),
+                              'images/image2.png');
+                        } else {
+                          
+                        }
                       } else {
                         print('Login Require');
                         requireLoginDialog();

@@ -6,20 +6,23 @@ class ShowForm extends StatelessWidget {
   final String label;
   final Function(String) changeFunc;
   final bool? obsecu;
+  final double? width;
   const ShowForm({
     Key? key,
     required this.label,
     required this.changeFunc,
     this.obsecu,
+    this.width,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 4),
-      width: 200,
+      width: width ?? 200,
       height: 40,
-      child: TextFormField(obscureText: obsecu ?? false,
+      child: TextFormField(
+        obscureText: obsecu ?? false,
         onChanged: changeFunc,
         decoration: InputDecoration(
           label: ShowText(label: label),
