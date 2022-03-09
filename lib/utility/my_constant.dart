@@ -28,4 +28,10 @@ class MyConstant {
         fontSize: 14,
         fontWeight: FontWeight.normal,
       );
+
+      TextStyle h3BlueStyle() => const TextStyle(
+        color: Colors.blue,
+        fontSize: 14,
+        fontWeight: FontWeight.normal,
+      );
 }

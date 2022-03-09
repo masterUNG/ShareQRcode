@@ -22,8 +22,10 @@ class AddData extends StatefulWidget {
 class _AddDataState extends State<AddData> {
   String? uidLogin, nameItem, urlItem;
   var itemDropdowns = <String>[];
+  var favoriteLinkModels = <FavoriteLinkModel>[];
   String? chooseItemDropdown, tempChooseItem;
   var tempChooseItems = <String>[];
+  var tempChooseItemsModels = <FavoriteLinkModel>[];
 
   @override
   void initState() {
@@ -34,6 +36,7 @@ class _AddDataState extends State<AddData> {
   Future<void> findUserData() async {
     if (itemDropdowns.isNotEmpty) {
       itemDropdowns.clear();
+      favoriteLinkModels.clear();
     }
 
     await FirebaseAuth.instance.authStateChanges().listen((event) async {
@@ -49,6 +52,7 @@ class _AddDataState extends State<AddData> {
           FavoriteLinkModel favoriteLinkModel =
               FavoriteLinkModel.fromMap(item.data());
           itemDropdowns.add(favoriteLinkModel.nameItem);
+          favoriteLinkModels.add(favoriteLinkModel);
         }
 
         itemDropdowns.add('+ Add New Item');
@@ -83,11 +87,23 @@ class _AddDataState extends State<AddData> {
               newDropBox(context),
               tempChooseItems.isEmpty
                   ? const ShowSizeBox()
-                  : ListView.builder(shrinkWrap: true,
+                  : ListView.builder(
+                      shrinkWrap: true,
                       physics: const ScrollPhysics(),
                       itemCount: tempChooseItems.length,
-                      itemBuilder: (context, index) =>
-                          ShowText(label: tempChooseItems[index]),
+                      itemBuilder: (context, index) => Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            ShowText(label: tempChooseItems[index]),
+                            const ShowSizeBox(),
+                            ShowText(
+                              label: findUrlink(tempChooseItems[index]),
+                              textStyle: MyConstant().h3BlueStyle(),
+                            ),IconButton(onPressed: (){}, icon: const Icon(Icons.delete_forever_outlined))
+                          ],
+                        ),
+                      ),
                     )
             ],
           ),
@@ -173,5 +189,15 @@ class _AddDataState extends State<AddData> {
         findUserData();
       });
     });
+  }
+
+  String findUrlink(String tempChooseItem) {
+    String urlItem = '';
+    for (var item in favoriteLinkModels) {
+      if (item.nameItem == tempChooseItem) {
+        urlItem = item.urlItem;
+      }
+    }
+    return urlItem;
   }
 }
