@@ -1,8 +1,11 @@
 // ignore_for_file: avoid_print
 
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:shareqrcode/models/favorite_link_model.dart';
 import 'package:shareqrcode/utility/my_constant.dart';
 import 'package:shareqrcode/utility/my_dialog.dart';
@@ -10,6 +13,7 @@ import 'package:shareqrcode/widgets/show_form.dart';
 import 'package:shareqrcode/widgets/show_image.dart';
 import 'package:shareqrcode/widgets/show_sizebox.dart';
 import 'package:shareqrcode/widgets/show_text.dart';
+import 'package:shareqrcode/widgets/showbutton.dart';
 
 class AddData extends StatefulWidget {
   const AddData({
@@ -21,17 +25,28 @@ class AddData extends StatefulWidget {
 }
 
 class _AddDataState extends State<AddData> {
-  String? uidLogin, nameItem, urlItem;
+  String? uidLogin, nameItem, urlItem, nameProduct, detailProduct;
   var itemDropdowns = <String>[];
   var favoriteLinkModels = <FavoriteLinkModel>[];
   String? chooseItemDropdown, tempChooseItem;
   var tempChooseItems = <String>[];
   var tempChooseItemsModels = <FavoriteLinkModel>[];
+  File? file;
+  var photoPaths = <String>[];
+  var files = <File>[];
 
   @override
   void initState() {
     super.initState();
     findUserData();
+  }
+
+  Future<void> processTakePhoto(ImageSource source) async {
+    var result = await ImagePicker()
+        .pickImage(source: source, maxWidth: 800, maxHeight: 800);
+    setState(() {
+      file = File(result!.path);
+    });
   }
 
   Future<void> findUserData() async {
@@ -55,12 +70,9 @@ class _AddDataState extends State<AddData> {
           itemDropdowns.add(favoriteLinkModel.nameItem);
           favoriteLinkModels.add(favoriteLinkModel);
         }
-
         itemDropdowns.add('+ Add New Item');
 
         setState(() {});
-
-        // print('##8March value ==> ${value.docs}');
       });
     });
   }
@@ -82,11 +94,15 @@ class _AddDataState extends State<AddData> {
                   const ShowSizeBox(),
                   newTitle(),
                   const ShowSizeBox(),
-                  ShowForm(label: 'ชื่อสินค้า', changeFunc: (String string) {}),
+                  ShowForm(
+                      label: 'ชื่อสินค้า',
+                      changeFunc: (String string) =>
+                          nameProduct = string.trim()),
                   const ShowSizeBox(),
                   ShowForm(
                       label: 'รายละเอียดสินค้า',
-                      changeFunc: (String string) {}),
+                      changeFunc: (String string) =>
+                          detailProduct = string.trim()),
                   const ShowSizeBox(),
                   newDropBox(context),
                   const ShowSizeBox(),
@@ -99,25 +115,59 @@ class _AddDataState extends State<AddData> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            ShowImage(
-                              path: 'images/camera.png',
-                              width: constraints.maxWidth * 0.6,
-                            ),
+                            file == null
+                                ? ShowImage(
+                                    path: 'images/camera.png',
+                                    width: constraints.maxWidth * 0.6,
+                                  )
+                                : SizedBox(width: constraints.maxWidth * 0.6,
+                                    child: Image.file(
+                                      file!,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
                           ],
                         ),
-                        Positioned(right: 0,bottom: 0,
+                        Positioned(
+                          right: 0,
+                          bottom: 0,
                           child: IconButton(
-                              onPressed: () {},
+                              onPressed: () =>
+                                  processTakePhoto(ImageSource.camera),
                               icon: const Icon(Icons.add_a_photo_outlined)),
                         )
                       ],
                     ),
+                  ),
+                  const ShowSizeBox(
+                    hight: 100,
                   )
                 ],
               );
             }),
           ),
         ),
+      ),
+      floatingActionButton: ShowButton(
+        label: 'Add Data',
+        pressFunc: () {
+          if ((nameProduct?.isEmpty ?? true) ||
+              (detailProduct?.isEmpty ?? true)) {
+            MyDialog(context: context).normalDialog(
+                'กรอกข้อมูล ไม่ครบ',
+                'กรอก ชื่อสินค้า และ รายละเอียดให้ครบ',
+                'OK',
+                () => Navigator.pop(context),
+                'images/image3.png');
+          } else if (tempChooseItems.isEmpty) {
+            MyDialog(context: context).normalDialog(
+                'ยังไม่เลือก Item',
+                'กรุณาเลือก Item ด้วย คะ',
+                'OK',
+                () => Navigator.pop(context),
+                'images/image2.png');
+          } else {}
+        },
       ),
     );
   }
