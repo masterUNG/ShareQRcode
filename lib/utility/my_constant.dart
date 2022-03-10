@@ -14,6 +14,11 @@ class MyConstant {
   static String routeShowList = '/showList';
   static String routeAuthen = '/authen';
 
+  static Color primary = const Color(0xff7E57C2);
+  static Color light = const Color(0xffb085f5);
+  static Color dark = const Color(0xff4d2c91);
+  
+
   TextStyle h1Style() => const TextStyle(
         fontSize: 30,
         fontWeight: FontWeight.bold,
@@ -29,7 +34,7 @@ class MyConstant {
         fontWeight: FontWeight.normal,
       );
 
-      TextStyle h3BlueStyle() => const TextStyle(
+  TextStyle h3BlueStyle() => const TextStyle(
         color: Colors.blue,
         fontSize: 14,
         fontWeight: FontWeight.normal,
