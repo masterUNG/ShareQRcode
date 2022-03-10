@@ -158,6 +158,8 @@ class _HomeState extends State<Home> {
     try {
       var result = await scan();
       print('#10mar result QR code ==> $result');
+      qrCode = result;
+      processCheckQR();
     } catch (e) {}
   }
 
