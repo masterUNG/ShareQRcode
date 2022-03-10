@@ -37,13 +37,14 @@ class ProductModel {
     return ProductModel(
       nameProduct: (map['nameProduct'] ?? '') as String,
       detailProduct: (map['detailProduct'] ?? '') as String,
-      titleItems: List<String>.from((map['titleItems'] ?? const <String>[]) as List<String>),
-      linkItems: List<String>.from((map['linkItems'] ?? const <String>[]) as List<String>),
-      pathImages: List<String>.from((map['pathImages'] ?? const <String>[]) as List<String>),
+      titleItems: List<String>.from((map['titleItems'] ?? const <String>[])),
+      linkItems: List<String>.from((map['linkItems'] ?? const <String>[])),
+      pathImages: List<String>.from((map['pathImages'] ?? const <String>[])),
       qrCode: (map['qrCode'] ?? '') as String,
       timestamp: (map['timestamp']),
     );
   }
 
-  factory ProductModel.fromJson(String source) => ProductModel.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory ProductModel.fromJson(String source) =>
+      ProductModel.fromMap(json.decode(source) as Map<String, dynamic>);
 }

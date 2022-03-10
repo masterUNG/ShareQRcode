@@ -26,38 +26,40 @@ class _AuthenState extends State<Authen> {
         onTap: () => FocusScope.of(context).requestFocus(FocusScopeNode()),
         behavior: HitTestBehavior.opaque,
         child: Center(
-          child: Column(
-            children: [
-              const ShowImage(
-                path: 'images/image1.png',
-              ),
-              ShowForm(
-                label: 'Email :',
-                changeFunc: (String string) => email = string.trim(),
-              ),
-              const ShowSizeBox(),
-              ShowForm(
-                label: 'Password :',
-                changeFunc: (String string) => password = string.trim(),
-                obsecu: true,
-              ),
-              ShowButton(
-                  label: 'Login',
-                  pressFunc: () {
-                    if ((email?.isEmpty ?? true) ||
-                        (password?.isEmpty ?? true)) {
-                      MyDialog(context: context).normalDialog(
-                        'มีช่องว่าง ?',
-                        'กรุณากรอกทุกช่อง คะ',
-                        'OK',
-                        () => Navigator.pop(context),
-                        'images/image4.png',
-                      );
-                    } else {
-                      processCheckAuthen();
-                    }
-                  })
-            ],
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                const ShowImage(
+                  path: 'images/image1.png',
+                ),
+                ShowForm(
+                  label: 'Email :',
+                  changeFunc: (String string) => email = string.trim(),
+                ),
+                const ShowSizeBox(),
+                ShowForm(
+                  label: 'Password :',
+                  changeFunc: (String string) => password = string.trim(),
+                  obsecu: true,
+                ),
+                ShowButton(
+                    label: 'Login',
+                    pressFunc: () {
+                      if ((email?.isEmpty ?? true) ||
+                          (password?.isEmpty ?? true)) {
+                        MyDialog(context: context).normalDialog(
+                          'มีช่องว่าง ?',
+                          'กรุณากรอกทุกช่อง คะ',
+                          'OK',
+                          () => Navigator.pop(context),
+                          'images/image4.png',
+                        );
+                      } else {
+                        processCheckAuthen();
+                      }
+                    })
+              ],
+            ),
           ),
         ),
       ),
