@@ -1,7 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:shareqrcode/utility/my_constant.dart';
 import 'package:shareqrcode/utility/my_dialog.dart';
 import 'package:shareqrcode/widgets/show_form.dart';
+import 'package:shareqrcode/widgets/show_form_password.dart';
 import 'package:shareqrcode/widgets/show_image.dart';
 import 'package:shareqrcode/widgets/show_sizebox.dart';
 import 'package:shareqrcode/widgets/showbutton.dart';
@@ -19,7 +21,9 @@ class _AuthenState extends State<Authen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      appBar: AppBar(elevation: 0,
+        foregroundColor: Colors.black,
+        backgroundColor: Colors.white,
         title: const Text('Login'),
       ),
       body: GestureDetector(
@@ -37,27 +41,32 @@ class _AuthenState extends State<Authen> {
                   changeFunc: (String string) => email = string.trim(),
                 ),
                 const ShowSizeBox(),
-                ShowForm(
+                ShowFormPassword(
                   label: 'Password :',
                   changeFunc: (String string) => password = string.trim(),
-                  obsecu: true,
+                 
                 ),
-                ShowButton(
-                    label: 'Login',
-                    pressFunc: () {
-                      if ((email?.isEmpty ?? true) ||
-                          (password?.isEmpty ?? true)) {
-                        MyDialog(context: context).normalDialog(
-                          'มีช่องว่าง ?',
-                          'กรุณากรอกทุกช่อง คะ',
-                          'OK',
-                          () => Navigator.pop(context),
-                          'images/image4.png',
-                        );
-                      } else {
-                        processCheckAuthen();
-                      }
-                    })
+                Row(mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ShowButton(
+                        label: 'Login',
+                        pressFunc: () {
+                          if ((email?.isEmpty ?? true) ||
+                              (password?.isEmpty ?? true)) {
+                            MyDialog(context: context).normalDialog(
+                              'มีช่องว่าง ?',
+                              'กรุณากรอกทุกช่อง คะ',
+                              'OK',
+                              () => Navigator.pop(context),
+                              'images/image4.png',
+                            );
+                          } else {
+                            processCheckAuthen();
+                          }
+                        }),
+                        ShowButton(label: 'Register', pressFunc: ()=> Navigator.pushNamed(context, MyConstant.routeRegister)),
+                  ],
+                )
               ],
             ),
           ),

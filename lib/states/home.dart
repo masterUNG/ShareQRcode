@@ -87,7 +87,7 @@ class _HomeState extends State<Home> {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   ShowCardBox(
-                    label: 'สร้าง QR code',
+                    label: 'สร้าง Link',
                     pressFunc: () {
                       if (checkLogin!) {
                         Navigator.pushNamed(context, MyConstant.routeAddData);
@@ -127,7 +127,7 @@ class _HomeState extends State<Home> {
       backgroundColor: Colors.white,
       foregroundColor: Colors.black,
       title: ShowText(
-        label: 'ใส่ระหัสสินค้า หรือ สแกน',
+        label: 'ใส่ระหัส หรือ สแกน',
         textStyle: MyConstant().h2Style(),
       ),
       actions: [
