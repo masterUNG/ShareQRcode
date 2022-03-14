@@ -82,7 +82,9 @@ class _AddDataState extends State<AddData> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      appBar: AppBar(elevation: 0,
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
         title: const Text('Add Data'),
       ),
       body: GestureDetector(

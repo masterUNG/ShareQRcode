@@ -11,6 +11,7 @@ import 'package:shareqrcode/utility/my_dialog.dart';
 import 'package:shareqrcode/widgets/show_card_box.dart';
 import 'package:shareqrcode/widgets/show_form.dart';
 import 'package:shareqrcode/widgets/show_image.dart';
+import 'package:shareqrcode/widgets/show_progress.dart';
 import 'package:shareqrcode/widgets/show_sign_out.dart';
 import 'package:shareqrcode/widgets/show_text.dart';
 import 'package:shareqrcode/widgets/showbutton.dart';
@@ -57,6 +58,9 @@ class _HomeState extends State<Home> {
           }
         });
       }
+      setState(() {
+        
+      });
     });
   }
 
@@ -66,6 +70,12 @@ class _HomeState extends State<Home> {
         checkLogin = false;
       } else {
         checkLogin = true;
+        // String? urlAvatar = event.photoURL;
+        // print('urlAvatar ==>> $urlAvatar');
+        // if (urlAvatar == null) {
+        //   MyDialog(context: context).normalDialog('No Avatar',
+        //       'คุณยังไม่มี รูป Profile', 'OK', () => null, 'images/image4.png');
+        // }
       }
       setState(() {
         load = false;
@@ -78,36 +88,54 @@ class _HomeState extends State<Home> {
     return Scaffold(
       appBar: newAppBar(),
       body: LayoutBuilder(builder: (context, constraints) {
-        return GestureDetector(onTap: () => FocusScope.of(context).requestFocus(FocusScopeNode()),
+        return GestureDetector(
+          onTap: () => FocusScope.of(context).requestFocus(FocusScopeNode()),
           behavior: HitTestBehavior.opaque,
           child: Column(
             children: [
               newWork(constraints),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  ShowCardBox(
-                    label: 'สร้าง Link',
-                    pressFunc: () {
-                      if (checkLogin!) {
-                        Navigator.pushNamed(context, MyConstant.routeAddData);
-                      } else {
-                        requireLoginDialog();
-                      }
-                    },
-                    pathImage: 'images/image2.png',
-                  ),
-                  ShowCardBox(
-                    label: 'อ่าน QR code',
-                    pressFunc: () => processScanQRcode(),
-                    pathImage: 'images/image1.png',
-                  ),
-                ],
-              )
+              // createAndRead(context),
+              load
+                  ? const ShowProgress()
+                  : ListView.builder(shrinkWrap: true,
+                      physics: const ScrollPhysics(),
+                      itemCount: productModels.length,
+                      itemBuilder: (context, index) =>
+                          Row(
+                            children: [
+                              
+                              ShowText(label: productModels[index].nameProduct),
+                            ],
+                          ),
+                    )
             ],
           ),
         );
       }),
+    );
+  }
+
+  Row createAndRead(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        ShowCardBox(
+          label: 'สร้าง Link',
+          pressFunc: () {
+            if (checkLogin!) {
+              Navigator.pushNamed(context, MyConstant.routeAddData);
+            } else {
+              requireLoginDialog();
+            }
+          },
+          pathImage: 'images/image2.png',
+        ),
+        ShowCardBox(
+          label: 'อ่าน QR code',
+          pressFunc: () => processScanQRcode(),
+          pathImage: 'images/image1.png',
+        ),
+      ],
     );
   }
 
@@ -127,10 +155,20 @@ class _HomeState extends State<Home> {
       backgroundColor: Colors.white,
       foregroundColor: Colors.black,
       title: ShowText(
-        label: 'ใส่ระหัส หรือ สแกน',
+        label: MyConstant.appName,
         textStyle: MyConstant().h2Style(),
       ),
       actions: [
+        IconButton(
+          onPressed: () {
+            if (checkLogin!) {
+              Navigator.pushNamed(context, MyConstant.routeAddData);
+            } else {
+              requireLoginDialog();
+            }
+          },
+          icon: const Icon(Icons.add_box_outlined),
+        ),
         load
             ? const SizedBox()
             : checkLogin!
@@ -141,7 +179,8 @@ class _HomeState extends State<Home> {
   }
 
   Widget newWork(BoxConstraints constraints) {
-    return Container(margin: EdgeInsets.symmetric(horizontal: 16),
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16),
       child: Card(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -152,29 +191,43 @@ class _HomeState extends State<Home> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   ShowForm(
-                    width: constraints.maxWidth * 0.6,
+                    width: constraints.maxWidth * 0.5,
                     label: 'รหัสสินค้า',
                     changeFunc: (String string) => qrCode = string.trim(),
                   ),
-                  ShowButton(
-                      label: 'Go',
-                      pressFunc: () async {
-                        if (checkLogin!) {
-                          if (qrCode?.isEmpty ?? true) {
-                            MyDialog(context: context).normalDialog(
-                                'Have Space ?',
-                                'Please Fill Every Blank',
-                                'OK',
-                                () => Navigator.pop(context),
-                                'images/image2.png');
+                  SizedBox(
+                    width: 56,
+                    height: 48,
+                    child: ShowButton(
+                        textStyle: MyConstant().h3WhiteStyle(),
+                        label: 'Go',
+                        pressFunc: () async {
+                          if (checkLogin!) {
+                            if (qrCode?.isEmpty ?? true) {
+                              MyDialog(context: context).normalDialog(
+                                  'Have Space ?',
+                                  'Please Fill Every Blank',
+                                  'OK',
+                                  () => Navigator.pop(context),
+                                  'images/image2.png');
+                            } else {
+                              processCheckQR();
+                            }
                           } else {
-                            processCheckQR();
+                            print('Login Require');
+                            requireLoginDialog();
                           }
-                        } else {
-                          print('Login Require');
-                          requireLoginDialog();
-                        }
-                      }),
+                        }),
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      processScanQRcode();
+                    },
+                    icon: const Icon(
+                      Icons.qr_code_scanner,
+                      size: 28,
+                    ),
+                  ),
                 ],
               ),
             ],
