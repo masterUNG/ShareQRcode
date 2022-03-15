@@ -21,16 +21,12 @@ class MyConstant {
   static Color dark = const Color(0xff4d2c91);
 
   static List<String> noProfiles = [
-    'https://i.stack.imgur.com/Dw6f7.png',
-    'https://i.stack.imgur.com/XPOr3.png',
-    'https://i.stack.imgur.com/YN0m7.png',
-    'https://i.stack.imgur.com/wKzo8.png',
-    'https://i.stack.imgur.com/Qt4JP.png',
-    'https://i.stack.imgur.com/Dw6f7.png',
-    'https://i.stack.imgur.com/XPOr3.png',
-    'https://i.stack.imgur.com/YN0m7.png',
-    'https://i.stack.imgur.com/wKzo8.png',
-    'https://i.stack.imgur.com/Qt4JP.png',
+    'images/avartar1.png',
+    'images/avartar2.png',
+    'images/avartar3.png',
+    'images/avartar4.png',
+    'images/avartar5.png',
+    'images/avartar6.png',
   ];
 
   TextStyle h1Style() => const TextStyle(

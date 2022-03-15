@@ -5,9 +5,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:qrscan/qrscan.dart';
 import 'package:shareqrcode/models/product_model.dart';
+import 'package:shareqrcode/models/user_model.dart';
 import 'package:shareqrcode/states/show_detail_qr_code.dart';
 import 'package:shareqrcode/utility/my_constant.dart';
 import 'package:shareqrcode/utility/my_dialog.dart';
+import 'package:shareqrcode/widgets/show_avatar_follow.dart';
 import 'package:shareqrcode/widgets/show_card_box.dart';
 import 'package:shareqrcode/widgets/show_form.dart';
 import 'package:shareqrcode/widgets/show_image.dart';
@@ -31,6 +33,8 @@ class _HomeState extends State<Home> {
   String? qrCode;
 
   var productModels = <ProductModel>[];
+  var userModels = <UserModel>[];
+  var docDataCodes = <String>[];
 
   @override
   void initState() {
@@ -45,6 +49,9 @@ class _HomeState extends State<Home> {
         .get()
         .then((value) async {
       for (var item in value.docs) {
+        String docDataCode = item.id;
+        UserModel userModel = UserModel.fromMap(item.data());
+
         await FirebaseFirestore.instance
             .collection('dataCode')
             .doc(item.id)
@@ -52,15 +59,15 @@ class _HomeState extends State<Home> {
             .get()
             .then((value) {
           for (var item in value.docs) {
+            docDataCodes.add(docDataCode);
+            userModels.add(userModel);
             ProductModel productModel = ProductModel.fromMap(item.data());
             productModels.add(productModel);
             print('#10mar QR code ==> ${productModel.qrCode}');
           }
         });
       }
-      setState(() {
-        
-      });
+      setState(() {});
     });
   }
 
@@ -91,24 +98,68 @@ class _HomeState extends State<Home> {
         return GestureDetector(
           onTap: () => FocusScope.of(context).requestFocus(FocusScopeNode()),
           behavior: HitTestBehavior.opaque,
-          child: Column(
-            children: [
-              newWork(constraints),
-              // createAndRead(context),
-              load
-                  ? const ShowProgress()
-                  : ListView.builder(shrinkWrap: true,
-                      physics: const ScrollPhysics(),
-                      itemCount: productModels.length,
-                      itemBuilder: (context, index) =>
-                          Row(
-                            children: [
-                              
-                              ShowText(label: productModels[index].nameProduct),
-                            ],
-                          ),
-                    )
-            ],
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                newWork(constraints),
+                // createAndRead(context),
+                load
+                    ? const ShowProgress()
+                    : ListView.builder(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        shrinkWrap: true,
+                        physics: const ScrollPhysics(),
+                        itemCount: productModels.length,
+                        itemBuilder: (context, index) => Column(
+                          children: [
+                            Row(
+                              children: [
+                                Expanded(
+                                  flex: 1,
+                                  child: Row(
+                                    children: [
+                                      userModels[index].urlAvatar.isEmpty
+                                          ? ShowAvatarFollow(
+                                              imageProvider: const AssetImage(
+                                                  'images/avartar4.png'),
+                                              tapAvatarFunc: () {
+                                                print(
+                                                    'you tab avata name ไปโปรไฟร์ ==> ${userModels[index].name}');
+                                              },
+                                              pressAddFunc: () {
+                                                print(
+                                                    'you press add follow ${docDataCodes[index]}');
+                                              },
+                                            )
+                                          : ShowAvatarFollow(
+                                              imageProvider: NetworkImage(
+                                                  userModels[index].urlAvatar),
+                                              tapAvatarFunc: () {
+                                                print(
+                                                    'you tab avata name ==> ${userModels[index].name}');
+                                              },
+                                              pressAddFunc: () {
+                                                print(
+                                                    'you press add follow ${docDataCodes[index]}');
+                                              },
+                                            ),
+                                    ],
+                                  ),
+                                ),
+                                Expanded(
+                                  flex: 3,
+                                  child: ShowText(
+                                      label: productModels[index].nameProduct, textStyle: MyConstant().h2Style(),),
+                                ),
+                                
+                              ],
+                            ),
+                            const Divider(color: Colors.grey,),
+                          ],
+                        ),
+                      )
+              ],
+            ),
           ),
         );
       }),

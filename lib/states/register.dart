@@ -1,5 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:shareqrcode/models/user_model.dart';
 import 'package:shareqrcode/utility/my_dialog.dart';
 import 'package:shareqrcode/widgets/show_form.dart';
 import 'package:shareqrcode/widgets/show_form_password.dart';
@@ -94,11 +96,12 @@ class _RegisterState extends State<Register> {
     await FirebaseAuth.instance
         .createUserWithEmailAndPassword(email: email!, password: password!)
         .then((value) async {
-      FirebaseAuth.instance.authStateChanges().listen((event) async {
-        await event!
-            .updateDisplayName(name)
-            .then((value) => Navigator.pop(context));
-      });
+      UserModel userModel = UserModel(name: name!, urlAvatar: '');
+      await FirebaseFirestore.instance
+          .collection('dataCode')
+          .doc(value.user!.uid)
+          .set(userModel.toMap())
+          .then((value) => Navigator.pop(context));
     }).catchError((onError) {
       MyDialog(context: context).normalDialog(onError.code, onError.message,
           'OK', () => Navigator.pop(context), 'images/image1.png');
