@@ -21,7 +21,7 @@ class ShowAvatarFollow extends StatelessWidget {
         children: [
           InkWell(
             onTap: tapAvatarFunc,
-            child: CircleAvatar(
+            child: CircleAvatar(radius: 100,
               backgroundImage: imageProvider,
             ),
           ),

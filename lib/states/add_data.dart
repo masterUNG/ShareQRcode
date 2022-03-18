@@ -210,7 +210,7 @@ class _AddDataState extends State<AddData> {
               pathImages: photoPaths,
               qrCode: qrCode,
               timestamp: Timestamp.fromDate(DateTime.now()),
-              post: false);
+             );
 
           if (files.isNotEmpty) {
             if (photoPaths.isNotEmpty) {
