@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shareqrcode/models/favorite_link_model.dart';
 import 'package:shareqrcode/models/product_model.dart';
+import 'package:shareqrcode/states/confirm_data.dart';
 import 'package:shareqrcode/utility/my_constant.dart';
 import 'package:shareqrcode/utility/my_dialog.dart';
 import 'package:shareqrcode/widgets/show_form.dart';
@@ -168,13 +169,13 @@ class _AddDataState extends State<AddData> {
           ),
         ),
       ),
-      floatingActionButton: newAddDataButton(context),
+      floatingActionButton: confirmButton(context),
     );
   }
 
-  ShowButton newAddDataButton(BuildContext context) {
+  ShowButton confirmButton(BuildContext context) {
     return ShowButton(
-      label: 'Add Data',
+      label: 'Confirm Data',
       pressFunc: () async {
         if ((nameProduct?.isEmpty ?? true) ||
             (detailProduct?.isEmpty ?? true)) {
@@ -201,11 +202,6 @@ class _AddDataState extends State<AddData> {
           String qrCode = uidLogin!.substring(0, 4);
           qrCode = '$qrCode${Random().nextInt(1000000)}';
 
-          // print('nameProduct = $nameProduct, detailProduct = $detailProduct');
-          // print(
-          //     ' tempItemtitle = $tempChooseItems, tempChooseUrlLink = $tempChooseUrllinks, photoPath = $photoPaths');
-          // print('qrCode ==> $qrCode');
-
           ProductModel productModel = ProductModel(
               nameProduct: nameProduct!,
               detailProduct: detailProduct!,
@@ -213,9 +209,13 @@ class _AddDataState extends State<AddData> {
               linkItems: tempChooseUrllinks,
               pathImages: photoPaths,
               qrCode: qrCode,
-              timestamp: Timestamp.fromDate(DateTime.now()));
+              timestamp: Timestamp.fromDate(DateTime.now()),
+              post: false);
 
           if (files.isNotEmpty) {
+            if (photoPaths.isNotEmpty) {
+              photoPaths.clear();
+            }
             for (var item in files) {
               String nameFile = 'product${Random().nextInt(1000000)}.jpg';
               FirebaseStorage storage = FirebaseStorage.instance;
@@ -229,16 +229,16 @@ class _AddDataState extends State<AddData> {
             }
           }
 
-          print('files.lenght ==> ${files.length}');
-          print('productModel ==> ${productModel.toMap()}');
+          print('#18mar files.lenght ==> ${files.length}');
+          print('#18mar productModel ==> ${productModel.toMap()}');
 
-          await FirebaseFirestore.instance
-              .collection('dataCode')
-              .doc(uidLogin)
-              .collection('product')
-              .doc()
-              .set(productModel.toMap())
-              .then((value) => Navigator.pop(context));
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ConfirmData(
+                  productModel: productModel,
+                ),
+              ));
         }
       },
     );

@@ -11,12 +11,52 @@ class MyDialog {
     required this.context,
   });
 
-  Future<void> chooseSourceDialog({required Function() cameraFunc, required Function() galleryFunc}) async {
+  Future<void> twoWayDialog({
+    required String title,
+    required String message,
+    required Function() saveOnlyFunc,
+    required Function() saveAndPostFunc,
+  }) async {
     showDialog(
       context: context,
       builder: (BuildContext context) => AlertDialog(
         title: ListTile(
-          leading: const SizedBox(width: 64,
+          leading: SizedBox(
+            width: 64,
+            height: 64,
+            child: ShowImage(path: 'images/image1.png'),
+          ),
+          title: ShowText(
+            label: title,
+            textStyle: MyConstant().h2Style(),
+          ),
+          subtitle: ShowText(label: message),
+        ),
+        actions: [
+          TextButton(
+              onPressed:  saveOnlyFunc,
+              child: const Text('Save Only')),
+          TextButton(
+              onPressed:  saveAndPostFunc,
+              child: const Text('Save and Post')),
+          TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel')),
+        ],
+      ),
+    );
+  }
+
+  Future<void> chooseSourceDialog({
+    required Function() cameraFunc,
+    required Function() galleryFunc,
+  }) async {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        title: ListTile(
+          leading: const SizedBox(
+            width: 64,
             child: ShowImage(path: 'images/camera.png'),
           ),
           title: ShowText(

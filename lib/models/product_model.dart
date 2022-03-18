@@ -11,6 +11,7 @@ class ProductModel {
   final List<String> pathImages;
   final String qrCode;
   final Timestamp timestamp;
+  final bool post;
   ProductModel({
     required this.nameProduct,
     required this.detailProduct,
@@ -19,6 +20,7 @@ class ProductModel {
     required this.pathImages,
     required this.qrCode,
     required this.timestamp,
+    required this.post,
   });
 
   Map<String, dynamic> toMap() {
@@ -30,6 +32,7 @@ class ProductModel {
       'pathImages': pathImages,
       'qrCode': qrCode,
       'timestamp': timestamp,
+      'post': post,
     };
   }
 
@@ -37,11 +40,12 @@ class ProductModel {
     return ProductModel(
       nameProduct: (map['nameProduct'] ?? '') as String,
       detailProduct: (map['detailProduct'] ?? '') as String,
-      titleItems: List<String>.from((map['titleItems'] ?? const <String>[])),
-      linkItems: List<String>.from((map['linkItems'] ?? const <String>[])),
-      pathImages: List<String>.from((map['pathImages'] ?? const <String>[])),
+      titleItems: List<String>.from((map['titleItems'] ?? const <String>[]) as List<String>),
+      linkItems: List<String>.from((map['linkItems'] ?? const <String>[]) as List<String>),
+      pathImages: List<String>.from((map['pathImages'] ?? const <String>[]) as List<String>),
       qrCode: (map['qrCode'] ?? '') as String,
       timestamp: (map['timestamp']),
+      post: (map['post'] ?? false) as bool,
     );
   }
 
