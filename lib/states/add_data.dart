@@ -5,6 +5,7 @@ import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shareqrcode/models/favorite_link_model.dart';
@@ -48,6 +49,7 @@ class _AddDataState extends State<AddData> {
         .pickImage(source: source, maxWidth: 800, maxHeight: 800);
     setState(() {
       file = File(result!.path);
+      files.add(File(result.path));
     });
   }
 
@@ -82,7 +84,8 @@ class _AddDataState extends State<AddData> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(elevation: 0,
+      appBar: AppBar(
+        elevation: 0,
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
         title: const Text('Add Data'),
@@ -137,8 +140,20 @@ class _AddDataState extends State<AddData> {
                           right: 0,
                           bottom: 0,
                           child: IconButton(
-                              onPressed: () =>
-                                  processTakePhoto(ImageSource.camera),
+                              onPressed: () async {
+                                // processTakePhoto(ImageSource.camera);
+                                MyDialog(context: context).chooseSourceDialog(
+                                  cameraFunc: () {
+                                    Navigator.pop(context);
+                                    return processTakePhoto(ImageSource.camera);
+                                  },
+                                  galleryFunc: () {
+                                    Navigator.pop(context);
+                                    return processTakePhoto(
+                                        ImageSource.gallery);
+                                  },
+                                );
+                              },
                               icon: const Icon(Icons.add_a_photo_outlined)),
                         )
                       ],
@@ -186,10 +201,10 @@ class _AddDataState extends State<AddData> {
           String qrCode = uidLogin!.substring(0, 4);
           qrCode = '$qrCode${Random().nextInt(1000000)}';
 
-          print('nameProduct = $nameProduct, detailProduct = $detailProduct');
-          print(
-              ' tempItemtitle = $tempChooseItems, tempChooseUrlLink = $tempChooseUrllinks, photoPath = $photoPaths');
-          print('qrCode ==> $qrCode');
+          // print('nameProduct = $nameProduct, detailProduct = $detailProduct');
+          // print(
+          //     ' tempItemtitle = $tempChooseItems, tempChooseUrlLink = $tempChooseUrllinks, photoPath = $photoPaths');
+          // print('qrCode ==> $qrCode');
 
           ProductModel productModel = ProductModel(
               nameProduct: nameProduct!,
@@ -199,6 +214,23 @@ class _AddDataState extends State<AddData> {
               pathImages: photoPaths,
               qrCode: qrCode,
               timestamp: Timestamp.fromDate(DateTime.now()));
+
+          if (files.isNotEmpty) {
+            for (var item in files) {
+              String nameFile = 'product${Random().nextInt(1000000)}.jpg';
+              FirebaseStorage storage = FirebaseStorage.instance;
+              Reference reference = storage.ref().child('product/$nameFile');
+              UploadTask uploadTask = reference.putFile(item);
+              await uploadTask.whenComplete(() async {
+                await reference
+                    .getDownloadURL()
+                    .then((value) => photoPaths.add(value));
+              });
+            }
+          }
+
+          print('files.lenght ==> ${files.length}');
+          print('productModel ==> ${productModel.toMap()}');
 
           await FirebaseFirestore.instance
               .collection('dataCode')

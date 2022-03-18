@@ -11,6 +11,31 @@ class MyDialog {
     required this.context,
   });
 
+  Future<void> chooseSourceDialog({required Function() cameraFunc, required Function() galleryFunc}) async {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        title: ListTile(
+          leading: const SizedBox(width: 64,
+            child: ShowImage(path: 'images/camera.png'),
+          ),
+          title: ShowText(
+            label: 'Please Choose Source Photo',
+            textStyle: MyConstant().h2Style(),
+          ),
+          subtitle: const ShowText(label: 'Please tap Camera or Gallery'),
+        ),
+        actions: [
+          TextButton(onPressed: cameraFunc, child: const Text('Camera')),
+          TextButton(onPressed: galleryFunc, child: const Text('Gallery')),
+          TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel')),
+        ],
+      ),
+    );
+  }
+
   Future<void> addNewItemDialog({
     required String title,
     required String message,
@@ -35,10 +60,13 @@ class MyDialog {
           ),
           subtitle: ShowText(label: message),
         ),
-        content: Column(mainAxisSize: MainAxisSize.min,
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
             ShowForm(label: 'ชื่อ Item', changeFunc: nameFunc),
-            const SizedBox(height: 16,),
+            const SizedBox(
+              height: 16,
+            ),
             ShowForm(label: 'Link Url', changeFunc: urlFunc),
           ],
         ),
