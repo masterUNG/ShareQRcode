@@ -56,14 +56,16 @@ class _HomeState extends State<Home> {
             .collection('dataCode')
             .doc(item.id)
             .collection('product')
+            .where('post', isEqualTo: true)
             .get()
             .then((value) {
           for (var item in value.docs) {
+            // print('#21mar ${item.data()}');
             docDataCodes.add(docDataCode);
             userModels.add(userModel);
             ProductModel productModel = ProductModel.fromMap(item.data());
             productModels.add(productModel);
-            print('#10mar QR code ==> ${productModel.qrCode}');
+            print('#21mar post ==> ${productModel.post}');
           }
         });
       }
@@ -149,12 +151,15 @@ class _HomeState extends State<Home> {
                                 Expanded(
                                   flex: 3,
                                   child: ShowText(
-                                      label: productModels[index].nameProduct, textStyle: MyConstant().h2Style(),),
+                                    label: productModels[index].nameProduct,
+                                    textStyle: MyConstant().h2Style(),
+                                  ),
                                 ),
-                                
                               ],
                             ),
-                            const Divider(color: Colors.grey,),
+                            const Divider(
+                              color: Colors.grey,
+                            ),
                           ],
                         ),
                       )

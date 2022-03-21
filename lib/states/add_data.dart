@@ -209,7 +209,7 @@ class _AddDataState extends State<AddData> {
               linkItems: tempChooseUrllinks,
               pathImages: photoPaths,
               qrCode: qrCode,
-              timestamp: Timestamp.fromDate(DateTime.now()),
+              timestamp: Timestamp.fromDate(DateTime.now()), post: false,
              );
 
           if (files.isNotEmpty) {

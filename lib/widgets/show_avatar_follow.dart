@@ -15,8 +15,8 @@ class ShowAvatarFollow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 66,
-      height: 66,
+      width: 90,
+      height: 90,
       child: Stack(
         children: [
           InkWell(
