@@ -85,7 +85,7 @@ class _AddDataState extends State<AddData> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      appBar: AppBar(leading: IconButton(onPressed: () => Navigator.pushNamedAndRemoveUntil(context, MyConstant.routeHome, (route) => false), icon: const Icon(Icons.arrow_back)),
         elevation: 0,
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
@@ -203,14 +203,16 @@ class _AddDataState extends State<AddData> {
           qrCode = '$qrCode${Random().nextInt(1000000)}';
 
           ProductModel productModel = ProductModel(
-              nameProduct: nameProduct!,
-              detailProduct: detailProduct!,
-              titleItems: tempChooseItems,
-              linkItems: tempChooseUrllinks,
-              pathImages: photoPaths,
-              qrCode: qrCode,
-              timestamp: Timestamp.fromDate(DateTime.now()), post: false,
-             );
+            nameProduct: nameProduct!,
+            detailProduct: detailProduct!,
+            titleItems: tempChooseItems,
+            linkItems: tempChooseUrllinks,
+            pathImages: photoPaths,
+            qrCode: qrCode,
+            timestamp: Timestamp.fromDate(DateTime.now()),
+            post: false,
+            categorys: [],
+          );
 
           if (files.isNotEmpty) {
             if (photoPaths.isNotEmpty) {

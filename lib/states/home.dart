@@ -1,5 +1,6 @@
 // ignore_for_file: avoid_print
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -104,70 +105,130 @@ class _HomeState extends State<Home> {
             child: Column(
               children: [
                 newWork(constraints),
-                // createAndRead(context),
+                const ShowText(label: 'Category'),
                 load
                     ? const ShowProgress()
-                    : ListView.builder(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                    : GridView.builder(
                         shrinkWrap: true,
                         physics: const ScrollPhysics(),
-                        itemCount: productModels.length,
-                        itemBuilder: (context, index) => Column(
-                          children: [
-                            Row(
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 3,
+                          mainAxisExtent: 230,
+                        ),
+                        itemBuilder: (BuildContext context, int index) =>
+                            InkWell(
+                          onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ShowDetailQRcode(productModel: productModels[index],),
+                              )),
+                          child: Card(
+                            child: Column(
                               children: [
-                                Expanded(
-                                  flex: 1,
-                                  child: Row(
-                                    children: [
-                                      userModels[index].urlAvatar.isEmpty
-                                          ? ShowAvatarFollow(
-                                              imageProvider: const AssetImage(
-                                                  'images/avartar4.png'),
-                                              tapAvatarFunc: () {
-                                                print(
-                                                    'you tab avata name ไปโปรไฟร์ ==> ${userModels[index].name}');
-                                              },
-                                              pressAddFunc: () {
-                                                print(
-                                                    'you press add follow ${docDataCodes[index]}');
-                                              },
-                                            )
-                                          : ShowAvatarFollow(
-                                              imageProvider: NetworkImage(
-                                                  userModels[index].urlAvatar),
-                                              tapAvatarFunc: () {
-                                                print(
-                                                    'you tab avata name ==> ${userModels[index].name}');
-                                              },
-                                              pressAddFunc: () {
-                                                print(
-                                                    'you press add follow ${docDataCodes[index]}');
-                                              },
-                                            ),
-                                    ],
-                                  ),
+                                productModels[index].pathImages.isEmpty
+                                    // ignore: prefer_const_constructors
+                                    ? SizedBox(
+                                        width: 150,
+                                        height: 170,
+                                        child: const ShowImage(
+                                          path: 'images/logo.png',
+                                        ),
+                                      )
+                                    : SizedBox(
+                                        width: 150,
+                                        height: 170,
+                                        child: CachedNetworkImage(
+                                          fit: BoxFit.cover,
+                                          imageUrl: productModels[index]
+                                              .pathImages[0],
+                                          placeholder: (context, string) =>
+                                              const ShowProgress(),
+                                          errorWidget: (context, string,
+                                                  dynamic) =>
+                                              const ShowImage(
+                                                  path: 'images/image1.png'),
+                                        ),
+                                      ),
+                                ShowText(
+                                  label: cutWord(
+                                      productModels[index].nameProduct, 10),
+                                  textStyle: MyConstant().h2Style16(),
                                 ),
-                                Expanded(
-                                  flex: 3,
-                                  child: ShowText(
-                                    label: productModels[index].nameProduct,
-                                    textStyle: MyConstant().h2Style(),
-                                  ),
-                                ),
+                                ShowText(
+                                    label: cutWord(
+                                        productModels[index].detailProduct,
+                                        25)),
                               ],
                             ),
-                            const Divider(
-                              color: Colors.grey,
-                            ),
-                          ],
+                          ),
                         ),
-                      )
+                        itemCount: productModels.length,
+                      ),
               ],
             ),
           ),
         );
       }),
+    );
+  }
+
+  ListView showListProductPostOld() {
+    return ListView.builder(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      shrinkWrap: true,
+      physics: const ScrollPhysics(),
+      itemCount: productModels.length,
+      itemBuilder: (context, index) => Column(
+        children: [
+          Row(
+            children: [
+              Expanded(
+                flex: 1,
+                child: Row(
+                  children: [
+                    userModels[index].urlAvatar.isEmpty
+                        ? ShowAvatarFollow(
+                            imageProvider:
+                                const AssetImage('images/avartar4.png'),
+                            tapAvatarFunc: () {
+                              print(
+                                  'you tab avata name ไปโปรไฟร์ ==> ${userModels[index].name}');
+                            },
+                            pressAddFunc: () {
+                              print(
+                                  'you press add follow ${docDataCodes[index]}');
+                            },
+                          )
+                        : ShowAvatarFollow(
+                            imageProvider:
+                                NetworkImage(userModels[index].urlAvatar),
+                            tapAvatarFunc: () {
+                              print(
+                                  'you tab avata name ==> ${userModels[index].name}');
+                            },
+                            pressAddFunc: () {
+                              print(
+                                  'you press add follow ${docDataCodes[index]}');
+                            },
+                          ),
+                  ],
+                ),
+              ),
+              Expanded(
+                flex: 3,
+                child: ShowText(
+                  label: productModels[index].nameProduct,
+                  textStyle: MyConstant().h2Style(),
+                ),
+              ),
+            ],
+          ),
+          const Divider(
+            color: Colors.grey,
+          ),
+        ],
+      ),
     );
   }
 
@@ -199,11 +260,13 @@ class _HomeState extends State<Home> {
     return AppBar(
       leading: Column(
         mainAxisAlignment: MainAxisAlignment.center,
+        // ignore: prefer_const_literals_to_create_immutables
         children: [
+          // ignore: prefer_const_constructors
           SizedBox(
             width: 36,
             height: 36,
-            child: ShowImage(path: 'images/icon.png'),
+            child: const ShowImage(path: 'images/icon.png'),
           ),
         ],
       ),
@@ -218,7 +281,8 @@ class _HomeState extends State<Home> {
         IconButton(
           onPressed: () {
             if (checkLogin!) {
-              Navigator.pushNamed(context, MyConstant.routeAddData);
+              Navigator.pushNamedAndRemoveUntil(
+                  context, MyConstant.routeAddData, (route) => false);
             } else {
               requireLoginDialog();
             }
@@ -341,5 +405,14 @@ class _HomeState extends State<Home> {
           () => Navigator.pop(context),
           'images/image3.png');
     }
+  }
+
+  String cutWord(String detailProduct, int word) {
+    String string = detailProduct;
+    if (string.length > word) {
+      string = string.substring(0, word);
+      string = '$string ...';
+    }
+    return string;
   }
 }

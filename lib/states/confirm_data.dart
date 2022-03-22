@@ -1,4 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
@@ -59,8 +61,10 @@ class _ConfirmDataState extends State<ConfirmData> {
                         message: 'Are You Sure ?',
                         saveOnlyFunc: () {
                           Navigator.pop(context);
+                          processSaveData(post: false);
                         },
                         saveAndPostFunc: () {
+                          processSaveData(post: true);
                           Navigator.pop(context);
                         })),
               ],
@@ -80,8 +84,8 @@ class _ConfirmDataState extends State<ConfirmData> {
             RepaintBoundary(
               key: globalKey,
               child: SizedBox(
-                width: 200,
-                height: 200,
+                width: 150,
+                height: 150,
                 child: QrImage(data: widget.productModel.qrCode),
               ),
             ),
@@ -129,5 +133,21 @@ class _ConfirmDataState extends State<ConfirmData> {
         ),
       ),
     );
+  }
+
+  Future<void> processSaveData({required bool post}) async {
+    Map<String, dynamic> map = widget.productModel.toMap();
+    print('map ==> $map');
+    map['post'] = post;
+
+    var user = FirebaseAuth.instance.currentUser;
+
+    await FirebaseFirestore.instance
+        .collection('dataCode')
+        .doc(user!.uid)
+        .collection('product')
+        .doc()
+        .set(map)
+        .then((value) => Navigator.pop(context));
   }
 }

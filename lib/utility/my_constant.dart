@@ -39,6 +39,11 @@ class MyConstant {
         fontWeight: FontWeight.w700,
       );
 
+       TextStyle h2Style16() => const TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.w500,
+      );
+
   TextStyle h3Style() => const TextStyle(
         fontSize: 14,
         fontWeight: FontWeight.normal,
