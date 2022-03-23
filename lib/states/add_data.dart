@@ -8,6 +8,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:shareqrcode/models/category_model.dart';
 import 'package:shareqrcode/models/favorite_link_model.dart';
 import 'package:shareqrcode/models/product_model.dart';
 import 'package:shareqrcode/states/confirm_data.dart';
@@ -39,10 +40,42 @@ class _AddDataState extends State<AddData> {
   var photoPaths = <String>[];
   var files = <File>[];
 
+  var categoryModels = <CategoryModel>[];
+  var itemCategorys = <String>[];
+
+  var chooseCategory;
+  String? addNewCatStr;
+  // var chooseCategoryModels = <CategoryModel>[];
+  var chooseCategorys = <String>[];
+
   @override
   void initState() {
     super.initState();
     findUserData();
+    findCategory();
+  }
+
+  Future<void> findCategory() async {
+    if (categoryModels.isNotEmpty) {
+      categoryModels.clear();
+      itemCategorys.clear();
+    }
+    await FirebaseFirestore.instance
+        .collection('category')
+        .orderBy('name')
+        .get()
+        .then((value) {
+      for (var item in value.docs) {
+        CategoryModel categoryModel = CategoryModel.fromMap(item.data());
+        // print('#23mar name Cat ==>> ${categoryModel.name}');
+        categoryModels.add(categoryModel);
+        itemCategorys.add(categoryModel.name);
+      }
+
+      itemCategorys.add('+ Add New Category');
+
+      setState(() {});
+    });
   }
 
   Future<void> processTakePhoto(ImageSource source) async {
@@ -85,12 +118,7 @@ class _AddDataState extends State<AddData> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(leading: IconButton(onPressed: () => Navigator.pushNamedAndRemoveUntil(context, MyConstant.routeHome, (route) => false), icon: const Icon(Icons.arrow_back)),
-        elevation: 0,
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
-        title: const Text('Add Data'),
-      ),
+      appBar: newAppBar(context),
       body: GestureDetector(
         onTap: () => FocusScope.of(context).requestFocus(FocusScopeNode()),
         behavior: HitTestBehavior.opaque,
@@ -112,6 +140,66 @@ class _AddDataState extends State<AddData> {
                       changeFunc: (String string) =>
                           detailProduct = string.trim()),
                   const ShowSizeBox(),
+                  categoryModels.isEmpty
+                      ? const SizedBox()
+                      : DropdownButton(
+                          items: itemCategorys
+                              .map(
+                                (e) => DropdownMenuItem(
+                                  child: ShowText(label: e),
+                                  value: e,
+                                ),
+                              )
+                              .toList(),
+                          value: chooseCategory,
+                          hint: const ShowText(label: 'Please Choose Category'),
+                          onChanged: (value) {
+                            if (value == '+ Add New Category') {
+                              // print('#23mar you Click Add Cat');
+                              MyDialog(context: context).categoryAddDialog(
+                                changeFunc: (String string) {
+                                  addNewCatStr = string.trim();
+                                },
+                                addCatFunc: () {
+                                  Navigator.pop(context);
+                                  if (addNewCatStr?.isEmpty ?? true) {
+                                    MyDialog(context: context).normalDialog(
+                                        'No Category',
+                                        'Please Fill Category',
+                                        'OK',
+                                        () => Navigator.pop(context),
+                                        'images/logo.png');
+                                  } else {
+                                    processCheckAndAddCategory();
+                                  }
+                                },
+                              );
+                            } else {
+                              // สิีงที่ต้องแก้พรุ่งนี้
+                              // if (chooseCategorys.isEmpty) {
+                              //   chooseCategorys.add(value.toString());
+                              // } else {
+                              //   bool check = true;
+                              //   for (var item in chooseCategorys) {
+                              //     if (value.toString() == item) {
+                              //       MyDialog(context: context).normalDialog(
+                              //           'Catetory ซำ้',
+                              //           'เลือกใหม่ Cat ซ้ำ',
+                              //           'OK',
+                              //           () => Navigator.pop(context),
+                              //           'images/logo.png');
+                              //       check = false;
+                              //     } else {
+                              //       if (check) {
+                              //         chooseCategorys.add(value.toString());
+                              //       }
+                              //     }
+                              //   }
+                              // }
+                              // print(
+                              //     '#23mar chooseCategorys ==>> $chooseCategorys');
+                            }
+                          }),
                   newDropBox(context),
                   const ShowSizeBox(),
                   listItemChoose(),
@@ -170,6 +258,19 @@ class _AddDataState extends State<AddData> {
         ),
       ),
       floatingActionButton: confirmButton(context),
+    );
+  }
+
+  AppBar newAppBar(BuildContext context) {
+    return AppBar(
+      leading: IconButton(
+          onPressed: () => Navigator.pushNamedAndRemoveUntil(
+              context, MyConstant.routeHome, (route) => false),
+          icon: const Icon(Icons.arrow_back)),
+      elevation: 0,
+      backgroundColor: Colors.white,
+      foregroundColor: Colors.black,
+      title: const Text('Add Data'),
     );
   }
 
@@ -366,5 +467,41 @@ class _AddDataState extends State<AddData> {
       }
     }
     return urlItem;
+  }
+
+  Future<void> processCheckAndAddCategory() async {
+    // print('#23mar addCat ==>> $addNewCatStr');
+    bool check = true; // true ==> ไม่ซ้ำเลย
+    for (var item in itemCategorys) {
+      if (addNewCatStr == item) {
+        check = false;
+      }
+    }
+
+    if (check) {
+      var user = FirebaseAuth.instance.currentUser;
+      String owner = user!.uid;
+      DateTime dateTime = DateTime.now();
+      Timestamp timestamp = Timestamp.fromDate(dateTime);
+      // print('#23mar owner ==> $owner');
+
+      CategoryModel categoryModel =
+          CategoryModel(name: addNewCatStr!, owner: owner, dateTime: timestamp);
+      await FirebaseFirestore.instance
+          .collection('category')
+          .doc()
+          .set(categoryModel.toMap())
+          .then((value) {
+        findCategory();
+        setState(() {});
+      });
+    } else {
+      MyDialog(context: context).normalDialog(
+          'Category ซ้ำ',
+          '$addNewCatStr มีอยู่แล้ว เปลี่ยนใหม่',
+          'OK',
+          () => Navigator.pop(context),
+          'images/logo.png');
+    }
   }
 }

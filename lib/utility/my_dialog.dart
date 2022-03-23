@@ -4,12 +4,45 @@ import 'package:shareqrcode/utility/my_constant.dart';
 import 'package:shareqrcode/widgets/show_form.dart';
 import 'package:shareqrcode/widgets/show_image.dart';
 import 'package:shareqrcode/widgets/show_text.dart';
+import 'package:shareqrcode/widgets/show_text_button.dart';
 
 class MyDialog {
   final BuildContext context;
   MyDialog({
     required this.context,
   });
+
+  Future<void> categoryAddDialog({
+    required Function(String) changeFunc,
+    required Function() addCatFunc,
+  }) async {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        title: ListTile(
+          leading: const SizedBox(
+            width: 64,
+            child: ShowImage(path: 'images/logo.png'),
+          ),
+          title: ShowText(
+            label: 'Add New Category',
+            textStyle: MyConstant().h2Style(),
+          ),
+        ),
+        content: ShowForm(label: 'Name Category', changeFunc: changeFunc),
+        actions: [
+           ShowTextButton(
+            label: 'Add Category',
+            pressFunc: addCatFunc,
+          ),
+          ShowTextButton(
+            label: 'Cancel',
+            pressFunc: () => Navigator.pop(context),
+          ),
+        ],
+      ),
+    );
+  }
 
   Future<void> twoWayDialog({
     required String title,
@@ -33,12 +66,9 @@ class MyDialog {
           subtitle: ShowText(label: message),
         ),
         actions: [
+          TextButton(onPressed: saveOnlyFunc, child: const Text('Save Only')),
           TextButton(
-              onPressed:  saveOnlyFunc,
-              child: const Text('Save Only')),
-          TextButton(
-              onPressed:  saveAndPostFunc,
-              child: const Text('Save and Post')),
+              onPressed: saveAndPostFunc, child: const Text('Save and Post')),
           TextButton(
               onPressed: () => Navigator.pop(context),
               child: const Text('Cancel')),
