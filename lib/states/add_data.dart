@@ -43,10 +43,10 @@ class _AddDataState extends State<AddData> {
   var categoryModels = <CategoryModel>[];
   var itemCategorys = <String>[];
 
-  var chooseCategory;
+  String? chooseCategory;
   String? addNewCatStr;
   // var chooseCategoryModels = <CategoryModel>[];
-  var chooseCategorys = <String>[];
+  var chooseCategorys = <String>['สาธารณะ'];
 
   @override
   void initState() {
@@ -142,64 +142,27 @@ class _AddDataState extends State<AddData> {
                   const ShowSizeBox(),
                   categoryModels.isEmpty
                       ? const SizedBox()
-                      : DropdownButton(
-                          items: itemCategorys
-                              .map(
-                                (e) => DropdownMenuItem(
-                                  child: ShowText(label: e),
-                                  value: e,
-                                ),
-                              )
-                              .toList(),
-                          value: chooseCategory,
-                          hint: const ShowText(label: 'Please Choose Category'),
-                          onChanged: (value) {
-                            if (value == '+ Add New Category') {
-                              // print('#23mar you Click Add Cat');
-                              MyDialog(context: context).categoryAddDialog(
-                                changeFunc: (String string) {
-                                  addNewCatStr = string.trim();
-                                },
-                                addCatFunc: () {
-                                  Navigator.pop(context);
-                                  if (addNewCatStr?.isEmpty ?? true) {
-                                    MyDialog(context: context).normalDialog(
-                                        'No Category',
-                                        'Please Fill Category',
-                                        'OK',
-                                        () => Navigator.pop(context),
-                                        'images/logo.png');
-                                  } else {
-                                    processCheckAndAddCategory();
-                                  }
-                                },
-                              );
-                            } else {
-                              // สิีงที่ต้องแก้พรุ่งนี้
-                              // if (chooseCategorys.isEmpty) {
-                              //   chooseCategorys.add(value.toString());
-                              // } else {
-                              //   bool check = true;
-                              //   for (var item in chooseCategorys) {
-                              //     if (value.toString() == item) {
-                              //       MyDialog(context: context).normalDialog(
-                              //           'Catetory ซำ้',
-                              //           'เลือกใหม่ Cat ซ้ำ',
-                              //           'OK',
-                              //           () => Navigator.pop(context),
-                              //           'images/logo.png');
-                              //       check = false;
-                              //     } else {
-                              //       if (check) {
-                              //         chooseCategorys.add(value.toString());
-                              //       }
-                              //     }
-                              //   }
-                              // }
-                              // print(
-                              //     '#23mar chooseCategorys ==>> $chooseCategorys');
-                            }
-                          }),
+                      : dropBoxCategory(context),
+                  chooseCategorys.isEmpty
+                      ? const SizedBox()
+                      : ListView.builder(
+                          shrinkWrap: true,
+                          physics: const ScrollPhysics(),
+                          itemCount: chooseCategorys.length,
+                          itemBuilder: (context, index) => ListTile(
+                            title: ShowText(
+                              label: chooseCategorys[index],
+                            ),
+                            trailing: chooseCategorys[index] == 'สาธารณะ'
+                                ? const SizedBox()
+                                : IconButton(
+                                    onPressed: () {
+                                      chooseCategorys.removeAt(index);
+                                      setState(() {});
+                                    },
+                                    icon: const Icon(Icons.delete_forever)),
+                          ),
+                        ),
                   newDropBox(context),
                   const ShowSizeBox(),
                   listItemChoose(),
@@ -259,6 +222,72 @@ class _AddDataState extends State<AddData> {
       ),
       floatingActionButton: confirmButton(context),
     );
+  }
+
+  DropdownButton<Object> dropBoxCategory(BuildContext context) {
+    return DropdownButton(
+        items: itemCategorys
+            .map(
+              (e) => DropdownMenuItem(
+                child: ShowText(label: e),
+                value: e,
+              ),
+            )
+            .toList(),
+        value: chooseCategory,
+        hint: const ShowText(label: 'กรุณาเลือก กลุ่ม'),
+        onChanged: (value) {
+          if (value == '+ Add New Category') {
+            // print('#23mar you Click Add Cat');
+            MyDialog(context: context).categoryAddDialog(
+              changeFunc: (String string) {
+                addNewCatStr = string.trim();
+              },
+              addCatFunc: () {
+                Navigator.pop(context);
+                if (addNewCatStr?.isEmpty ?? true) {
+                  MyDialog(context: context).normalDialog(
+                      'No Category',
+                      'Please Fill Category',
+                      'OK',
+                      () => Navigator.pop(context),
+                      'images/logo.png');
+                } else {
+                  processCheckAndAddCategory();
+                }
+              },
+            );
+          } else {
+            // สิีงที่ต้องแก้พรุ่งนี้
+
+            print('#24mar ก่อน chooseCatetorys ==> $chooseCategorys');
+
+            if (chooseCategorys.isEmpty) {
+              chooseCategorys.add(value.toString());
+            } else {
+              bool check = true; // true ==> ตัว Category ไม่มีการซ้ำ
+              for (var item in chooseCategorys) {
+                if (item == value.toString()) {
+                  check = false;
+                }
+              }
+
+              if (check) {
+                chooseCategorys.add(value.toString());
+                // check = true;
+              } else {
+                MyDialog(context: context).normalDialog(
+                    'Catetory ซำ้',
+                    'เลือกใหม่ Cat ซ้ำ',
+                    'OK',
+                    () => Navigator.pop(context),
+                    'images/logo.png');
+              }
+            }
+            print('#24mar หลัง chooseCatetorys ==> $chooseCategorys');
+            setState(() {});
+          }
+        });
   }
 
   AppBar newAppBar(BuildContext context) {
