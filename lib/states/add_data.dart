@@ -12,6 +12,7 @@ import 'package:shareqrcode/models/category_model.dart';
 import 'package:shareqrcode/models/favorite_link_model.dart';
 import 'package:shareqrcode/models/product_model.dart';
 import 'package:shareqrcode/states/confirm_data.dart';
+import 'package:shareqrcode/states/show_stock_link.dart';
 import 'package:shareqrcode/utility/my_constant.dart';
 import 'package:shareqrcode/utility/my_dialog.dart';
 import 'package:shareqrcode/widgets/show_form.dart';
@@ -163,9 +164,47 @@ class _AddDataState extends State<AddData> {
                                     icon: const Icon(Icons.delete_forever)),
                           ),
                         ),
-                  newDropBox(context),
+                  // newDropBox(context),
                   const ShowSizeBox(),
-                  listItemChoose(),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ShowForm(
+                        label: 'ชื่อลิ้งค์',
+                        changeFunc: (String string) {},
+                        width: 150,
+                      ),
+                      const SizedBox(
+                        width: 8,
+                      ),
+                      ShowForm(
+                        label: 'ลิ้งค์',
+                        changeFunc: (String string) {},
+                        width: 150,
+                      ),
+                      ShowButton(
+                          label: 'OK',
+                          pressFunc: () {
+                            MyDialog(context: context).discusDialog(
+                                'Item or Save ?',
+                                'คุณต้องการ Show Item และ เก็บข้อมูล',
+                                'Save And Show',
+                                'Save Only',
+                                () => null,
+                                () => null);
+                          }),
+                    ],
+                  ),
+                  ShowButton(
+                    label: 'Stock Link',
+                    pressFunc: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const ShowStockLink(),
+                      ),
+                    ),
+                  ),
+                  // listItemChoose(),
                   const ShowSizeBox(),
                   SizedBox(
                     width: constraints.maxWidth * 0.8,
@@ -423,7 +462,6 @@ class _AddDataState extends State<AddData> {
             .toList(),
         onChanged: (value) {
           String string = value;
-          print('string = $string');
 
           tempChooseItem = string;
 

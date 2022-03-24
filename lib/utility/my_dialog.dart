@@ -31,7 +31,7 @@ class MyDialog {
         ),
         content: ShowForm(label: 'Name Category', changeFunc: changeFunc),
         actions: [
-           ShowTextButton(
+          ShowTextButton(
             label: 'Add Category',
             pressFunc: addCatFunc,
           ),
@@ -54,7 +54,7 @@ class MyDialog {
       context: context,
       builder: (BuildContext context) => AlertDialog(
         title: ListTile(
-          leading: SizedBox(
+          leading: const SizedBox(
             width: 64,
             height: 64,
             child: ShowImage(path: 'images/image1.png'),
@@ -175,6 +175,46 @@ class MyDialog {
           TextButton(
             onPressed: function,
             child: Text(label),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> discusDialog(
+    String title,
+    String message,
+    String label1,
+    String label2,
+    Function() function1,
+    Function() function2,
+  ) async {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: ListTile(
+          leading: const ShowImage(
+            path: 'images/logo.png',
+            width: 64,
+          ),
+          title: ShowText(
+            label: title,
+            textStyle: MyConstant().h2Style(),
+          ),
+        ),
+        content: ShowText(label: message),
+        actions: [
+          TextButton(
+            onPressed: function1,
+            child: Text(label1),
+          ),
+          TextButton(
+            onPressed: function2,
+            child: Text(label2),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
           ),
         ],
       ),
