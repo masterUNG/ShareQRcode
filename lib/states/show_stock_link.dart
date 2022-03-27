@@ -160,7 +160,9 @@ class _ShowStockLinkState extends State<ShowStockLink> {
                         checkLists[index] = value!;
                       });
                     },
-                    title: ShowText(label: favoriteLinkModels[index].nameItem),
+                    title: ShowText(
+                        label:
+                            '${index + 1}. ${favoriteLinkModels[index].nameItem}'),
                   ),
                 ),
                 SizedBox(
@@ -182,7 +184,14 @@ class _ShowStockLinkState extends State<ShowStockLink> {
                 ),
                 ShowIconButton(
                   iconData: Icons.delete_outline,
-                  pressFunc: () => processDeleteLink(docIdFavoriteLinks[index]),
+                  pressFunc: () {
+                    MyDialog(context: context).confirmActionDialog(
+                        title: 'Confirm Delete ?',
+                        actionFunc: () {
+                          processDeleteLink(docIdFavoriteLinks[index]);
+                          Navigator.pop(context);
+                        });
+                  },
                   tooltip: 'ลบลิ้งค์',
                 ),
               ],
@@ -228,6 +237,38 @@ class _ShowStockLinkState extends State<ShowStockLink> {
 
     if (checkChooseLink) {
       print('มีการ เลือกแล้ว');
+
+      var docIdFavorityChooses = <String>[];
+      var favoritLinkModelsChooses = <FavoriteLinkModel>[];
+
+      int i = 0;
+      for (var item in checkLists) {
+        if (item) {
+          docIdFavorityChooses.add(docIdFavoriteLinks[i]);
+          favoritLinkModelsChooses.add(favoriteLinkModels[i]);
+        }
+        i++;
+      }
+
+      print('#26mar docIdFavorityChooses ==>> $docIdFavorityChooses');
+
+      String? nameGroup;
+
+      MyDialog(context: context).addGroupLinkDialog(
+        changeFunc: (String string) => nameGroup = string.trim(),
+        favolitLinkModels: favoritLinkModelsChooses,
+        addFunc: () {
+          Navigator.pop(context);
+          if (nameGroup?.isEmpty ?? true) {
+            MyDialog(context: context).normalDialog(
+                'No Name Group',
+                'Please Fill Name Group',
+                'OK',
+                () => Navigator.pop(context),
+                'images/logo.png');
+          } else {}
+        },
+      );
     } else {
       MyDialog(context: context).normalDialog(
           'ยังไม่เลือกลิ้งค์',

@@ -1,5 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
+import 'package:shareqrcode/models/favorite_link_model.dart';
 import 'package:shareqrcode/utility/my_constant.dart';
 import 'package:shareqrcode/widgets/show_form.dart';
 import 'package:shareqrcode/widgets/show_image.dart';
@@ -11,6 +12,85 @@ class MyDialog {
   MyDialog({
     required this.context,
   });
+
+  Future<void> confirmActionDialog(
+      {required String title, required Function() actionFunc}) async {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+              title: ListTile(
+                leading: const SizedBox(
+                  width: 60,
+                  child: ShowImage(),
+                ),
+                title: ShowText(
+                  label: title,
+                  textStyle: MyConstant().h2Style(),
+                ),
+              ),
+              actions: [
+                ShowTextButton(
+                  label: 'Confirm Delete',
+                  pressFunc: actionFunc,
+                ),
+                ShowTextButton(
+                  label: 'Cancel',
+                  pressFunc: () => Navigator.pop(context),
+                ),
+              ],
+            ));
+  }
+
+  Future<void> addGroupLinkDialog({
+    required Function(String) changeFunc,
+    required List<FavoriteLinkModel> favolitLinkModels,
+    required Function() addFunc,
+  }) async {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+              title: ListTile(
+                leading: const SizedBox(
+                  width: 100,
+                  child: ShowImage(),
+                ),
+                title: ShowText(
+                  label: 'Add Group',
+                  textStyle: MyConstant().h2Style(),
+                ),
+                subtitle: const ShowText(label: 'กรุณาตั้งชือ Group'),
+              ),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ShowForm(label: 'Name Group', changeFunc: changeFunc),
+                  Container(
+                    margin: const EdgeInsets.symmetric(vertical: 16),
+                    width: 300,
+                    height: 170,
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      physics: const ScrollPhysics(),
+                      itemCount: favolitLinkModels.length,
+                      itemBuilder: (context, index) => ShowText(
+                          label:
+                              '${index + 1}. ${favolitLinkModels[index].nameItem}'),
+                    ),
+                  )
+                ],
+              ),
+              actions: [
+                ShowTextButton(
+                  label: 'Add Group',
+                  pressFunc: addFunc,
+                ),
+                ShowTextButton(
+                  label: 'Cancel',
+                  pressFunc: () => Navigator.pop(context),
+                ),
+              ],
+            ));
+  }
 
   Future<void> categoryAddDialog({
     required Function(String) changeFunc,

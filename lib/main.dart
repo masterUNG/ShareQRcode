@@ -7,6 +7,7 @@ import 'package:shareqrcode/states/create_qr_code.dart';
 import 'package:shareqrcode/states/home.dart';
 import 'package:shareqrcode/states/register.dart';
 import 'package:shareqrcode/states/show_list.dart';
+import 'package:shareqrcode/states/test_page.dart';
 import 'package:shareqrcode/states/work_qr_code.dart';
 import 'package:shareqrcode/utility/my_constant.dart';
 
@@ -18,6 +19,7 @@ final Map<String, WidgetBuilder> map = {
   MyConstant.routeWorkQRcode: (context) => const WorkQRcode(),
   MyConstant.routeAuthen: (context) => const Authen(),
   MyConstant.routeRegister: (context) => const Register(),
+  '/testpage': (context) => const TestPage(),
 };
 
 String? initial;
@@ -25,7 +27,8 @@ String? initial;
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp().then((value) {
-    initial = MyConstant.routeHome;
+    // initial = MyConstant.routeHome;
+    initial = '/testpage';
     runApp(const MyApp());
   });
 }
@@ -37,7 +40,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(debugShowCheckedModeBanner: false,
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
       routes: map,
       initialRoute: initial,
     );

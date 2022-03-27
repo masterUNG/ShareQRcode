@@ -22,7 +22,7 @@ class ShowForm extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 4),
       width: width ?? 200,
       height: 40,
-      child: TextFormField(keyboardType: TextInputType.multiline,
+      child: TextFormField(
         obscureText: obsecu ?? false,
         onChanged: changeFunc,
         decoration: InputDecoration(

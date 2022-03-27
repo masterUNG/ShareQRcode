@@ -2,18 +2,18 @@
 import 'package:flutter/material.dart';
 
 class ShowImage extends StatelessWidget {
-  final String path;
+  final String? path;
   final double? width;
   const ShowImage({
     Key? key,
-    required this.path,
+     this.path,
     this.width,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(width: width ?? 250,
-      child: Image.asset(path),
+      child: Image.asset(path ?? 'images/logo.png'),
     );
   }
 }
