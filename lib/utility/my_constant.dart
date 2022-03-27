@@ -29,6 +29,10 @@ class MyConstant {
     'images/avartar6.png',
   ];
 
+  BoxDecoration myBox() => BoxDecoration(
+      border: Border.all(color: MyConstant.dark),
+      borderRadius: BorderRadius.circular(4));
+
   TextStyle h1Style() => const TextStyle(
         fontSize: 30,
         fontWeight: FontWeight.bold,
@@ -39,7 +43,7 @@ class MyConstant {
         fontWeight: FontWeight.w700,
       );
 
-       TextStyle h2Style16() => const TextStyle(
+  TextStyle h2Style16() => const TextStyle(
         fontSize: 16,
         fontWeight: FontWeight.w500,
       );
