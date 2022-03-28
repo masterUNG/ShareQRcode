@@ -5,6 +5,7 @@ import 'package:shareqrcode/states/add_data.dart';
 import 'package:shareqrcode/states/authen.dart';
 import 'package:shareqrcode/states/create_qr_code.dart';
 import 'package:shareqrcode/states/home.dart';
+import 'package:shareqrcode/states/input_data.dart';
 import 'package:shareqrcode/states/register.dart';
 import 'package:shareqrcode/states/show_list.dart';
 import 'package:shareqrcode/states/test_page.dart';
@@ -20,6 +21,7 @@ final Map<String, WidgetBuilder> map = {
   MyConstant.routeAuthen: (context) => const Authen(),
   MyConstant.routeRegister: (context) => const Register(),
   '/testpage': (context) => const TestPage(),
+  '/inputData': (context) => const InputData(),
 };
 
 String? initial;

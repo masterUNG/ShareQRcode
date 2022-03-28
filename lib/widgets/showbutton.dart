@@ -7,11 +7,13 @@ class ShowButton extends StatelessWidget {
   final String label;
   final Function() pressFunc;
   final TextStyle? textStyle;
+  final Color? color;
   const ShowButton({
     Key? key,
     required this.label,
     required this.pressFunc,
     this.textStyle,
+    this.color,
   }) : super(key: key);
 
   @override
@@ -19,9 +21,12 @@ class ShowButton extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(right: 4),
       child: ElevatedButton(
-        style: ElevatedButton.styleFrom(primary: MyConstant.primary),
+        style: ElevatedButton.styleFrom(primary: color ?? MyConstant.primary),
         onPressed: pressFunc,
-        child: Text(label, style: textStyle,),
+        child: Text(
+          label,
+          style: textStyle,
+        ),
       ),
     );
   }

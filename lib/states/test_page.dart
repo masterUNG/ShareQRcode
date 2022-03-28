@@ -24,80 +24,200 @@ class _TestPageState extends State<TestPage> {
   TextEditingController nameController = TextEditingController();
   TextEditingController linkController = TextEditingController();
 
+  var privates = <String>['Doramon', 'Nopita'];
+  String? privatesChoose;
+
+  var buttonWidgets = <Widget>[
+    ShowButton(
+      label: 'Button1',
+      color: Colors.green,
+      pressFunc: () {},
+    ),
+    Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        ShowButton(
+          label: 'Button2',
+          color: Colors.blue,
+          pressFunc: () {},
+        ),
+        ShowButton(
+          label: 'Button2',
+          color: Colors.blue,
+          pressFunc: () {},
+        ),
+        ShowButton(
+          label: 'Button2',
+          color: Colors.blue,
+          pressFunc: () {},
+        ),
+      ],
+    ),
+    Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        ShowButton(
+          label: 'Button2',
+          color: Colors.blue,
+          pressFunc: () {},
+        ),
+        ShowButton(
+          label: 'Button2',
+          color: Colors.blue,
+          pressFunc: () {},
+        ),
+        ShowButton(
+          label: 'Button2',
+          color: Colors.blue,
+          pressFunc: () {},
+        ),
+      ],
+    ),
+    Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        ShowButton(
+          label: 'Button2',
+          color: Colors.blue,
+          pressFunc: () {},
+        ),
+        ShowButton(
+          label: 'Button2',
+          color: Colors.blue,
+          pressFunc: () {},
+        ),
+        ShowButton(
+          label: 'Button2',
+          color: Colors.blue,
+          pressFunc: () {},
+        ),
+      ],
+    ),
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(),
-      body: Column(
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(
+              height: 36,
+            ),
+            // newForm(),
+            const SizedBox(
+              height: 36,
+            ),
+            ShowButton(label: 'Private', pressFunc: () => addButtonVertical()),
+            ListView.builder(
+              shrinkWrap: true,
+              physics: const ScrollPhysics(),
+              itemCount: buttonWidgets.length,
+              itemBuilder: (context, index) => SizedBox(
+                width: 100,
+                child: buttonWidgets[index],
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  void addButtonVertical() {
+    Widget widget1 = ShowButton(
+      label: 'Button1',
+      pressFunc: () {},
+      color: Colors.green,
+    );
+    Widget widget2 =  Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        ShowButton(
+          label: 'Button2',
+          color: Colors.blue,
+          pressFunc: () {},
+        ),
+        ShowButton(
+          label: 'Button2',
+          color: Colors.blue,
+          pressFunc: () {},
+        ),
+        ShowButton(
+          label: 'Button2',
+          color: Colors.blue,
+          pressFunc: () {},
+        ),
+      ],
+    );
+    buttonWidgets.add(widget1);
+    buttonWidgets.add(widget2);
+    buttonWidgets.add(widget2);
+    buttonWidgets.add(widget2);
+    setState(() {});
+  }
+
+  LayoutBuilder layoutTable() {
+    return LayoutBuilder(
+      builder: (context, constraints) => Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(
-            height: 36,
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: MyConstant().myBox(),
+            width: constraints.maxWidth * 0.5 - 4,
+            child: Text('data'),
           ),
-          newForm(),
-          const SizedBox(
-            height: 36,
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: MyConstant().myBox(),
+            width: constraints.maxWidth * 0.5 - 4,
+            child: Column(
+              children: [
+                ShowText(
+                  label: 'สาธารณะ',
+                  textStyle: MyConstant().h2Style(),
+                ),
+                favoritTable2Models.isEmpty
+                    ? const SizedBox()
+                    : ListView.builder(
+                        shrinkWrap: true,
+                        physics: const ScrollPhysics(),
+                        itemCount: favoritTable2Models.length,
+                        itemBuilder: (context, index) => ShowText(
+                          label: favoritTable2Models[index].nameItem,
+                        ),
+                      ),
+              ],
+            ),
           ),
-          layoutTable()
         ],
       ),
     );
   }
 
-  LayoutBuilder layoutTable() {
-    return LayoutBuilder(
-          builder: (context, constraints) => Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: MyConstant().myBox(),
-                width: constraints.maxWidth * 0.5 - 4,
-                child: Column(
-                  children: [
-                    ShowText(
-                      label: 'Table 1',
-                      textStyle: MyConstant().h2Style(),
-                    ),
-                    favoritTable1Models.isEmpty
-                        ? const SizedBox()
-                        : ListView.builder(
-                            shrinkWrap: true,
-                            physics: const ScrollPhysics(),
-                            itemCount: favoritTable1Models.length,
-                            itemBuilder: (context, index) => ShowText(
-                              label: favoritTable1Models[index].nameItem,
-                            ),
-                          ),
-                  ],
+  Column listViewPrivate() {
+    return Column(
+      children: [
+        ShowText(
+          label: 'ส่วนตัว',
+          textStyle: MyConstant().h2Style(),
+        ),
+        favoritTable1Models.isEmpty
+            ? const SizedBox()
+            : ListView.builder(
+                shrinkWrap: true,
+                physics: const ScrollPhysics(),
+                itemCount: favoritTable1Models.length,
+                itemBuilder: (context, index) => ShowText(
+                  label: favoritTable1Models[index].nameItem,
                 ),
               ),
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: MyConstant().myBox(),
-                width: constraints.maxWidth * 0.5 - 4,
-                child: Column(
-                  children: [
-                    ShowText(
-                      label: 'Table 2',
-                      textStyle: MyConstant().h2Style(),
-                    ),
-                    favoritTable2Models.isEmpty
-                        ? const SizedBox()
-                        : ListView.builder(
-                            shrinkWrap: true,
-                            physics: const ScrollPhysics(),
-                            itemCount: favoritTable2Models.length,
-                            itemBuilder: (context, index) => ShowText(
-                              label: favoritTable2Models[index].nameItem,
-                            ),
-                          ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        );
+      ],
+    );
   }
 
   Row newForm() {
@@ -133,7 +253,9 @@ class _TestPageState extends State<TestPage> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const ChooseOrCreateSubTable(sourceTable: 'Table1',),
+                        builder: (context) => const ChooseOrCreateSubTable(
+                          sourceTable: 'Table1',
+                        ),
                       ));
 
                   // FavoriteLinkModel model =
