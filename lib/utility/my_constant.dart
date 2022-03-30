@@ -20,6 +20,8 @@ class MyConstant {
   static Color light = const Color(0xffb085f5);
   static Color dark = const Color(0xff4d2c91);
 
+  static Color myBlack = Colors.black45;
+
   static List<String> noProfiles = [
     'images/avartar1.png',
     'images/avartar2.png',
@@ -41,6 +43,12 @@ class MyConstant {
   TextStyle h2Style() => const TextStyle(
         fontSize: 18,
         fontWeight: FontWeight.w700,
+      );
+
+  TextStyle h2WhiteStyle() => const TextStyle(
+        fontSize: 18,
+        fontWeight: FontWeight.w700,
+        color: Colors.white,
       );
 
   TextStyle h2Style16() => const TextStyle(

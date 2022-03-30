@@ -22,19 +22,25 @@ class ShowForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 4),
+      margin: const EdgeInsets.only(left: 16,right: 16,bottom: 16),
       width: width ?? 200,
-      height: 40,
+      // height: 40,
       child: TextFormField(
+        keyboardType: TextInputType.multiline,
+        minLines: 1,
+        maxLines: 5,
+        style: MyConstant().h2WhiteStyle(),
         controller: textEditingController,
         obscureText: obsecu ?? false,
         onChanged: changeFunc,
         decoration: InputDecoration(
-          label: ShowText(label: label),
-          enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: MyConstant.dark)),
-          focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: MyConstant.light)),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
+          label: ShowText(
+            label: label,
+            textStyle: MyConstant().h2WhiteStyle(),
+          ),
+          filled: true,
+          fillColor: MyConstant.myBlack,
         ),
       ),
     );

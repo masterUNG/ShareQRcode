@@ -6,6 +6,7 @@ import 'package:shareqrcode/states/authen.dart';
 import 'package:shareqrcode/states/create_qr_code.dart';
 import 'package:shareqrcode/states/home.dart';
 import 'package:shareqrcode/states/input_data.dart';
+import 'package:shareqrcode/states/main_menu.dart';
 import 'package:shareqrcode/states/register.dart';
 import 'package:shareqrcode/states/show_list.dart';
 import 'package:shareqrcode/states/test_page.dart';
@@ -22,6 +23,7 @@ final Map<String, WidgetBuilder> map = {
   MyConstant.routeRegister: (context) => const Register(),
   '/testpage': (context) => const TestPage(),
   '/inputData': (context) => const InputData(),
+  '/mainMenu': (context) => const MainMenu(),
 };
 
 String? initial;
@@ -30,7 +32,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp().then((value) {
     // initial = MyConstant.routeHome;
-    initial = '/testpage';
+    initial = '/mainMenu';
     runApp(const MyApp());
   });
 }
