@@ -35,6 +35,11 @@ class MyConstant {
       border: Border.all(color: MyConstant.dark),
       borderRadius: BorderRadius.circular(4));
 
+  BoxDecoration blackBox() => BoxDecoration(
+        color: MyConstant.myBlack,
+        borderRadius: BorderRadius.circular(30),
+      );
+
   TextStyle h1Style() => const TextStyle(
         fontSize: 30,
         fontWeight: FontWeight.bold,
@@ -49,6 +54,12 @@ class MyConstant {
         fontSize: 18,
         fontWeight: FontWeight.w700,
         color: Colors.white,
+      );
+
+      TextStyle h2PurpleStyle() => const TextStyle(
+        fontSize: 18,
+        fontWeight: FontWeight.w700,
+        color: Color.fromARGB(255, 199, 77, 220),
       );
 
   TextStyle h2Style16() => const TextStyle(
