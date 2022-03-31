@@ -1,5 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:shareqrcode/models/favorite_link_model.dart';
+import 'package:shareqrcode/states/display_create_product_online.dart';
 import 'package:shareqrcode/utility/my_constant.dart';
 import 'package:shareqrcode/utility/my_dialog.dart';
 import 'package:shareqrcode/widgets/show_black_box.dart';
@@ -18,7 +22,20 @@ class CreateProductLive extends StatefulWidget {
 
 class _CreateProductLiveState extends State<CreateProductLive> {
   var favoriteLinkModels = <FavoriteLinkModel>[];
-  String? name, link;
+  String? name, link, content, price, amount;
+  File? file;
+
+  Future<void> processTakePhoto(ImageSource imageSource) async {
+    var result = await ImagePicker().pickImage(
+      source: imageSource,
+      maxWidth: 800,
+      maxHeight: 800,
+    );
+    if (result != null) {
+      file = File(result.path);
+      setState(() {});
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,25 +52,39 @@ class _CreateProductLiveState extends State<CreateProductLive> {
           return SingleChildScrollView(
             child: Column(
               children: [
+                file == null
+                    ? const SizedBox()
+                    : SizedBox(
+                        width: 250,
+                        height: 250,
+                        child: Image.file(file!),
+                      ),
                 ShowBlackBox(
                   iconData: Icons.add_a_photo,
                   title: 'รูป',
-                  pressFunc: () {},
+                  pressFunc: () => processTakePhoto(ImageSource.camera),
+                  iconButtonWidget: IconButton(
+                    onPressed: () => processTakePhoto(ImageSource.gallery),
+                    icon: const Icon(
+                      Icons.add_photo_alternate,
+                      color: Colors.white,
+                    ),
+                  ),
                 ),
                 ShowForm(
                   width: constraints.maxWidth,
                   label: 'ข้อความ',
-                  changeFunc: (String string) {},
+                  changeFunc: (String string) => content = string.trim(),
                 ),
                 ShowForm(
                   width: constraints.maxWidth,
                   label: 'ราคา',
-                  changeFunc: (String string) {},
+                  changeFunc: (String string) => price = string.trim(),
                 ),
                 ShowForm(
                   width: constraints.maxWidth,
                   label: 'จำนวน',
-                  changeFunc: (String string) {},
+                  changeFunc: (String string) => amount = string.trim(),
                 ),
                 favoriteLinkModels.isEmpty
                     ? const SizedBox()
@@ -74,15 +105,19 @@ class _CreateProductLiveState extends State<CreateProductLive> {
                                   // mainAxisAlignment:
                                   //     MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Expanded(flex: 2,
+                                    Expanded(
+                                      flex: 2,
                                       child: ShowText(
-                                        label: favoriteLinkModels[index].nameItem,
+                                        label:
+                                            favoriteLinkModels[index].nameItem,
                                         textStyle: MyConstant().h2WhiteStyle(),
                                       ),
                                     ),
-                                    Expanded(flex: 1,
+                                    Expanded(
+                                      flex: 1,
                                       child: ShowText(
-                                        label: favoriteLinkModels[index].urlItem,
+                                        label:
+                                            favoriteLinkModels[index].urlItem,
                                         textStyle: MyConstant().h2PurpleStyle(),
                                       ),
                                     ),
@@ -130,7 +165,19 @@ class _CreateProductLiveState extends State<CreateProductLive> {
                 // newTitleContactLink('โทรศัพย์ ที่ใช้ติดต่อ'),
                 ShowBlackBox(
                   title: 'กดเพื่อสร้าง สินค้า',
-                  pressFunc: () {},
+                  pressFunc: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => DisplayCreateProductOnline(
+                            favoriteLinkModels: favoriteLinkModels,
+                            content: content,
+                            price: price,
+                            amount: amount,
+                            file: file,
+                          ),
+                        ));
+                  },
                 ),
               ],
             ),
@@ -141,7 +188,8 @@ class _CreateProductLiveState extends State<CreateProductLive> {
   }
 
   Widget newTitleContactLink(String title) {
-    return Row(mainAxisAlignment: MainAxisAlignment.start,
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Container(
           width: 200,
