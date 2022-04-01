@@ -204,10 +204,6 @@ class _CreateProductLiveState extends State<CreateProductLive> {
                   label: title,
                   textStyle: MyConstant().h2WhiteStyle(),
                 ),
-                // ShowText(
-                //   label: favoriteLinkModels[index].urlItem,
-                //   textStyle: MyConstant().h3BlueStyle(),
-                // ),
               ],
             ),
           ),

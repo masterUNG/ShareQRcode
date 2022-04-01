@@ -27,34 +27,43 @@ class _MainMenuState extends State<MainMenu> {
         backgroundColor: Colors.black,
         title: const Text('Main Menu'),
       ),
-      body: Column(
-        children: [
-          ShowBlackBox(
-            title: title,
-            pressFunc: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const CreateProductLive(),
-                )),
+      body: SingleChildScrollView(
+        child: GestureDetector(onTap: () => FocusScope.of(context).requestFocus(FocusScopeNode()),
+          behavior: HitTestBehavior.opaque,
+          child: Column(
+            children: [
+              ShowBlackBox(
+                title: title,
+                pressFunc: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const CreateProductLive(),
+                    )),
+              ),
+              ShowBlackBox(
+                title: subTitles[0],
+                pressFunc: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const CreateLink(),
+                    )),
+              ),
+              ShowBlackBox(
+                title: subTitles[1],
+                pressFunc: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ProcessScanQR(),
+                    )),
+              ),
+              // const Spacer(),
+              ShowForm(label: 'Name', changeFunc: (String string) {}),
+              ShowForm(label: 'Link', changeFunc: (String string) {}),
+              ShowBlackBox(title: 'เลือกที่เก็บ', pressFunc: () {}),
+              ShowBlackBox(title: 'OK', pressFunc: () {}),
+            ],
           ),
-          ShowBlackBox(
-            title: subTitles[0],
-            pressFunc: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const CreateLink(),
-                )),
-          ),
-          ShowBlackBox(
-            title: subTitles[1],
-            pressFunc: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const ProcessScanQR(),)),
-          ),
-          const Spacer(),
-          ShowForm(label: 'Name', changeFunc: (String string){}),
-           ShowForm(label: 'Link', changeFunc: (String string){}),
-           ShowBlackBox(title: 'เลือกที่เก็บ', pressFunc: (){}),
-            ShowBlackBox(title: 'OK', pressFunc: (){}),
-        ],
+        ),
       ),
     );
   }

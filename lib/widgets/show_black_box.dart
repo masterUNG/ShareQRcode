@@ -9,12 +9,14 @@ class ShowBlackBox extends StatelessWidget {
   final Function() pressFunc;
   final IconData? iconData;
   final Widget? iconButtonWidget;
+  final Widget? iconLeading;
   const ShowBlackBox({
     Key? key,
     required this.title,
     required this.pressFunc,
     this.iconData,
     this.iconButtonWidget,
+    this.iconLeading,
   }) : super(key: key);
 
   @override
@@ -28,12 +30,13 @@ class ShowBlackBox extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          ListTile(
+          ListTile(leading: iconLeading ?? const SizedBox(),
             trailing: SizedBox(
               width: 100,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
-                children: [ iconButtonWidget ?? const SizedBox(), 
+                children: [
+                  iconButtonWidget ?? const SizedBox(),
                   IconButton(
                       onPressed: pressFunc,
                       icon: Icon(
